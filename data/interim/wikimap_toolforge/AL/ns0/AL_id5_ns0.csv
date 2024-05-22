@@ -1,0 +1,13 @@
+pageid,ns,title,index,coordinates,thumbnail.source,thumbnail.width,thumbnail.height,entityterms.label,query_lat,query_lon,radius
+2453734,0,Q2542521,-1,"[{'lat': 39.98333333, 'lon': 19.91666667, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Lukova_pamje.jpg/320px-Lukova_pamje.jpg,320.0,240.0,['Lukovë'],39.91140848168171,19.87143899561571,10000
+7508865,0,Q7590363,0,"[{'lat': 39.931, 'lon': 19.9499, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/St._Mary%27s_Monastery%2C_Kakome--.jpg/320px-St._Mary%27s_Monastery%2C_Kakome--.jpg,320.0,180.0,"[""St. Mary's Monastery, Kakome""]",39.91140848168171,19.87143899561571,10000
+17978248,0,Q16350395,1,"[{'lat': 39.94763948, 'lon': 19.96921786, 'primary': True}]",,,,['Nivicë'],39.91140848168171,19.87143899561571,10000
+24039379,0,Q22007660,2,"[{'lat': 39.9192, 'lon': 19.9608, 'primary': True}]",,,,['Bosh'],39.91140848168171,19.87143899561571,10000
+24039380,0,Q22007661,3,"[{'lat': 39.91666667, 'lon': 19.93333333, 'primary': True}]",,,,['Perroi i Brodanit'],39.91140848168171,19.87143899561571,10000
+24039384,0,Q22007665,4,"[{'lat': 39.8933, 'lon': 19.9792, 'primary': True}]",,,,['Maja e Eremecit'],39.91140848168171,19.87143899561571,10000
+24039385,0,Q22007666,5,"[{'lat': 39.91667, 'lon': 19.93333, 'primary': True}]",,,,['Gjiri i Kakomese'],39.91140848168171,19.87143899561571,10000
+24039386,0,Q22007667,6,"[{'lat': 39.91194, 'lon': 19.90889, 'primary': True}]",,,,['Kepi i Qefalit'],39.91140848168171,19.87143899561571,10000
+24039390,0,Q22007671,7,"[{'lat': 39.9, 'lon': 19.98333333, 'primary': True}]",,,,['Pasare'],39.91140848168171,19.87143899561571,10000
+24039391,0,Q22007672,8,"[{'lat': 39.9475, 'lon': 19.9567, 'primary': True}]",,,,['Mal Shendelli'],39.91140848168171,19.87143899561571,10000
+27119032,0,Q25159890,9,"[{'lat': 39.90333333, 'lon': 19.77888889, 'primary': True}]",,,,,39.91140848168171,19.87143899561571,10000
+95729331,0,Q97293214,10,"[{'lat': 39.926342, 'lon': 19.938201, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/3Road_To_Kakome_Near_Saranda_2017.jpg/320px-3Road_To_Kakome_Near_Saranda_2017.jpg,320.0,213.0,['Bay of Kakome'],39.91140848168171,19.87143899561571,10000
