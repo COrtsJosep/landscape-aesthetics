@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /home
+cd /home/ubuntu
 
 # first: set up anaconda
 wget https://repo.anaconda.com/archive/Anaconda3-2024.02-1-Linux-x86_64.sh # fetch installer
@@ -11,11 +11,7 @@ rm Anaconda3-2024.02-1-Linux-x86_64.sh # remove installer
 # second: set up the environment
 conda create -n geoproject python=3.12 # create environment geoproject
 conda activate geoproject # turn it on babe
-conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet
 conda install numpy pandas geopandas requests
+conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet
 
-# third: set up git
-sudo apt update # update system package index
-sudo apt install git # get git
-git --version # check
 # TODO: clone the repository
