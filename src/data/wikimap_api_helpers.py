@@ -52,7 +52,7 @@ def get_query_points(shape, use_circles = True, radius = 10000):
             point = shapely.geometry.Point(lon, lat)
             lats.append(lat); lons.append(lon)
             if use_circles:
-                mask.append(shape.intersects(generate_circle(point)))
+                mask.append(shape.intersects(generate_circle(point, radius = radius)))
             else:
                 mask.append(shape.contains(point))
             

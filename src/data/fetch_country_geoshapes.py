@@ -25,8 +25,5 @@ resource_destination.unlink()
 for filepath in resource_destination.parent.glob('*'):
     suffix = filepath.suffix
     filepath.rename(filepath.parent / ('country_geoshapes' + suffix))
-#(resource_destination.parent / 'NUTS_RG_01M_2021_4326.shp').rename(resource_destination.parent / 'country_geoshapes.shp')
-#(resource_destination.parent / 'NUTS_RG_01M_2021_4326.shx').rename(resource_destination.parent / 'country_geoshapes.shx')
-
 
 print('All done!')
