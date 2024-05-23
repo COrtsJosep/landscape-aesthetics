@@ -105,7 +105,9 @@ def query_at(lat, lon, radius, i, country):
                            orient='columns')
                 .assign(query_lat = lat,
                         query_lon = lon,
-                        radius = radius)
+                        radius = radius,
+                        country = country
+                       )
             )
 
             file_location_path = Path(__file__)
