@@ -100,6 +100,7 @@ git config user.email "YOUR_GITHUB_EMAIL"
 git config user.name "YOUR_NAME"
 git pull # always pull before you write any code
 ```
+Pro tip: you can run all of these 7 commands at once, separated with a semicolon (;).
 
 ### Structure of the project
 The structure is heavily inspired from [Cookiecutter](https://cookiecutter-data-science.drivendata.org/v1/) and slightly from 
