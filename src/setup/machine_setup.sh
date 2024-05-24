@@ -17,3 +17,19 @@ conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet
 # TODO: clone the repository
 cd /home/ubuntu/.ssh
 ssh-keygen -t rsa -b 4096 -C "josep.cunqueroorts@uzh.ch" -f "COrtsJosep"
+cat COrtsJosep.pub # to be able to add it to GitHub
+ssh -i COrtsJosep -T git@github.com # check
+touch config
+nano config
+## Then add the following 5 lines without the first #. Paste them, close with "CTRL + x", save, same name
+## GitHub - COrtsJosep
+#Host COrtsJosep
+#        HostName github.com
+#        User git
+#        IdentityFile ~/.ssh/COrtsJosep
+
+cd /home/ubuntu
+git clone git@github.com:COrtsJosep/landscape-aesthetics.git --config core.sshCommand="ssh -i ~/.ssh/COrtsJosep"
+cd /home/ubuntu/landscape-aesthetics
+git config user.email "josep.cunqueroorts@uzh.ch"
+git config user.name "Josep"
