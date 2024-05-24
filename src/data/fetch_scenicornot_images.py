@@ -18,7 +18,7 @@ urllib.request.urlretrieve(resource_url, resource_destination)
 # extract the desired shape file
 print('Extracting the ZIP file...')
 with zipfile.ZipFile(resource_destination, 'r') as zip_ref:
-    zip_ref.extractall(path = resource_destination.parent)
+    zip_ref.extractall(path = resource_destination.with_suffix(''))
 
 # rename it and delete the zip file
 print('Deleting the ZIP file...')
