@@ -15,3 +15,5 @@ conda install numpy pandas geopandas requests
 conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet
 
 # TODO: clone the repository
+cd /home/ubuntu/.ssh
+ssh-keygen -t rsa -b 4096 -C "josep.cunqueroorts@uzh.ch" -f "COrtsJosep"
