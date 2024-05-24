@@ -56,14 +56,50 @@ ssh -i PATH_TO_PRIVATE_KEY -NL 8000:localhost:8000 ubuntu@IP_ADDRESS
  By now the connection should be established. Now you just need to copy the URL from above into your browser.
 
 ### Connecting your GitHub account
-TODO
+Last step is to set up an ssh key so that you can pull and push code to and from the repository, from the Science Cloud instance. 
+Since we are all writing code from the same machine, each of us should have their own ssh key. That way we can keep track of who does what.
 
-[managing multiple accounts](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-your-personal-account/managing-multiple-accounts)
+First thing is creating your key. On the instance, run:
+```
+cd /home/ubuntu/.ssh
+ssh-keygen -t rsa -b 4096 -C "YOUR_GITHUB_EMAIL" -f "YOUR_GITHUB_USERNAME"
+cat YOUR_GITHUB_USERNAME.pub
+```
+After running ```ssh-keygen```, give a good password for the key. Now, the ```cat``` command should have printed out your publickey. 
+Go to github.com > Settings > SHH and GPG keys > New SSH key. Give it a name and paste your publickey. To check if it works, 
+run ```ssh -i YOUR_GITHUB_USERNAME -T git@github.com``` on the instance. 
 
-[article from Medium](https://vivekumar08.medium.com/managing-multiple-github-accounts-on-a-single-machine-a-professional-guide-26eee841d411)
+Great, now your ssh key has been created and is linked to your GitHub account! The last step is to add some lines in the ssh 
+configuration file. To be able to edit the file from the console, run ```nano config```. This will open up the editor. Now
+please add the following 5 lines:
+```
+# GitHub - YOUR_GITHUB_USERNAME
+Host YOUR_GITHUB_USERNAME
+        HostName github.com
+        User git
+        IdentityFile ~/.ssh/YOUR_GITHUB_USERNAME
+```
+After pasting them, close the editor with ctrl + x, say yes to save, and press enter. That should be it!
+
+Resources used:
+- [Article from GitHub](https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-your-personal-account/managing-multiple-accounts)
+- [Article from Medium](https://vivekumar08.medium.com/managing-multiple-github-accounts-on-a-single-machine-a-professional-guide-26eee841d411)
 
 ## Writing code
 Great, now you are set up and ready to write code! Some things to consider:
+
+### First things first
+Each time you want to contribute to the project, you have to connect to the remote repository. To do this, run the following commands:
+```
+eval `ssh-agent -s` # turns on ssh-agent
+ssh-add -D # deactivates other people's keys
+ssh-add /home/ubuntu/.ssh/YOUR_GITHUB_USERNAME # activates your key
+
+cd /home/ubuntu/landscape-aesthetics # sets the current directory to the project folder
+git config user.email "YOUR_GITHUB_EMAIL"  
+git config user.name "YOUR_NAME"
+git pull # always pull before you write any code
+```
 
 ### Structure of the project
 The structure is heavily inspired from [Cookiecutter](https://cookiecutter-data-science.drivendata.org/v1/) and slightly from 
