@@ -115,3 +115,29 @@ sources. Code is in /src, divided depending on what the purpose is. Reports, ref
 - We aim for reproducibility. Never do anything by hand, everything must be code. Never modify and overwrite data
 - When installing packages, always try ```conda install PACKAGE_NAME```, then ```conda install -c conda-forge PACKAGE_NAME```, and if nothing works, ```pip install PACKAGE_NAME```. Always in the environment
 - If you install a new module, add it to the second section of the file /src/setup/machine_setup.sh
+
+### Screen
+There is one last tool that can be useful if you want to run a program that will take long to finish. A problem with 
+working with the remote Science Cloud instance is that if for a moment your connection is severed (like for instance
+if your WiFi falls for a second, or your VPN disconnects), then your current session with the instance will hang forever
+and you will have to close the connection and connect again. Also might happen if your computer goes into standby mode.
+This is of course not good if you want to run a long program that might take hours or days to run.
+
+The solution is using Screen. Screen is an already installed program that allows you to create new sessions, run processes there,
+and push the sessions to the background, so that they keep on running even after you close your connection to the instance. You
+can create as many sessions as you want (but try to close the ones you do not use anymore).
+The basic usage is:
+```
+screen -ls # lists all active sessions
+screen -S SCREEN_NAME # creates a session named SCREEN_NAME
+```
+After running that second line, you will land in the new screen session. It looks just like another console. Now you can run
+whatever you want. For instance ```python very_long_process.py```. You might want to do something else in the meantime, so 
+you want to switch back to the main session. To do that, press "ctrl-a + d". If you want to come back to the screen
+running in the background, run ```screen -r SCREEN_NAME```. To kill a screen session, log into it and run ```exit```.
+
+Those are the basics! You can do more things with it, but that was the most important. If you want to know more, here 
+are some quick guides:
+- [Linux Handbook](https://linuxhandbook.com/screen-command/)
+- [Geeks for Geeks](https://www.geeksforgeeks.org/screen-command-in-linux-with-examples/)
+- [Official Manual](https://www.gnu.org/software/screen/manual/screen.html)
