@@ -115,6 +115,7 @@ sources. Code is in /src, divided depending on what the purpose is. Reports, ref
 - We aim for reproducibility. Never do anything by hand, everything must be code. Never modify and overwrite data
 - When installing packages, always try ```conda install PACKAGE_NAME```, then ```conda install -c conda-forge PACKAGE_NAME```, and if nothing works, ```pip install PACKAGE_NAME```. Always in the environment
 - If you install a new module, add it to the second section of the file /src/setup/machine_setup.sh
+- Try not to ```git add``` data files, especially images. First because the storage in GitHub is limited, and secondly because each image has a license and maybe some licences forbid re-publishing without attribution. 
 
 ### Screen
 There is one last tool that can be useful if you want to run a program that will take long to finish. A problem with 
