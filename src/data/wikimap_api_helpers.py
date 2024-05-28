@@ -100,9 +100,7 @@ def query_at(lat, lon, radius, i, country):
         for ns_type in set([item['ns'] for item in response.json()]):
             df = (
                 pd
-                .DataFrame
-                .from_dict(pd.json_normalize([item for item in response.json() if item['ns'] == ns_type]),
-                           orient='columns')
+                .json_normalize([item for item in response.json() if item['ns'] == ns_type])
                 .assign(query_lat = lat,
                         query_lon = lon,
                         radius = radius,
