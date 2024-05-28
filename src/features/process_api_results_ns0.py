@@ -22,6 +22,7 @@ def process_ns0_df(df_path):
     
     df = df.drop(columns = ['entityterms.label', 'coordinates'])
     df.columns = [x.replace('.', '_') for x in df.columns.to_list()]
+    df = df.loc[~df.loc[:, 'resource_lat'].isna()] # drop if coordinates are empty
 
     return df
 
@@ -32,4 +33,10 @@ for country_path in wikimap_path.glob('*'):
 output_path = project_base_path / 'data' / 'processed' / 'wikimap_toolforge' / 'ns0.parquet'
 output_path.parent.mkdir(parents = True, exist_ok = True)
 
-pd.concat(ns0_dfs).to_parquet(output_path, index = False)
+(
+    pd
+    .concat(ns0_dfs)
+    .drop_duplicates(subset = ['pageid', 'title'])
+    .reset_index()
+    .to_parquet(output_path, index = False)
+)

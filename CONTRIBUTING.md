@@ -99,6 +99,8 @@ cd /home/ubuntu/landscape-aesthetics # sets the current directory to the project
 git config user.email "YOUR_GITHUB_EMAIL"  
 git config user.name "YOUR_NAME"
 git pull # always pull before you write any code
+
+conda activate geopandas
 ```
 Pro tip: you can run all of these 7 commands at once, separated with a semicolon (;).
 
