@@ -23,6 +23,10 @@ def process_ns6_df(df_path):
     #df = df.drop(columns = ['entityterms.label', 'coordinates'])
     #df.columns = [x.replace('.', '_') for x in df.columns.to_list()]
     #df = df.loc[~df.loc[:, 'resource_lat'].isna()] # drop if coordinates are empty
+    rename_dict = {'coordinates.1.lat': 'resource_lat', 
+                   'coordinates.1.lon': 'resource_lon', 
+                   'coordinates.1.primary': 'are_primary_coords', 
+                   'coordinates.1.bearing': 'resource_bearing'}
 
     return df
 
