@@ -20,7 +20,7 @@ for _, row in geo_df.query('LEVL_CODE == 0').iterrows():
         if relevant_point:
             i = wikimap_api_helpers.query_at(lat, lon, radius, i, country)
 
-        if i > 5: # artificial limit, only to test
+        if i > 10: # artificial limit, only to test
             break # artificial limit, only to test
 
     break # artificial limit, only to test
