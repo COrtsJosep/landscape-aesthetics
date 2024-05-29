@@ -10,6 +10,7 @@ shapefile_path = project_base_path / 'data' / 'external' / 'geoshapes' / 'countr
 geo_df = geopandas.read_file(shapefile_path)
 
 radius = 10000
+
 for _, row in geo_df.query('LEVL_CODE == 0').iterrows():
     country = row['NUTS_ID']
     shape = row['geometry']
@@ -20,10 +21,4 @@ for _, row in geo_df.query('LEVL_CODE == 0').iterrows():
         if relevant_point:
             i = wikimap_api_helpers.query_at(lat, lon, radius, i, country)
 
-        if i > 10: # artificial limit, only to test
-            break # artificial limit, only to test
-
-    break # artificial limit, only to test
-
-    print('Finished ', country)
     time.sleep(60)
