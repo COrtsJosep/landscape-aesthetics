@@ -1,5 +1,6 @@
 import math
 import time
+import json
 import shapely
 import requests
 import pandas as pd
@@ -67,10 +68,57 @@ def get_query_points(shape, use_circles = True, radius = 10000):
 
     return lats, lons, mask
 
+def preprocess_json(json):
+    '''
+    Takes the JSON (a list of dictionaries, in this case) given by the API call, and unpacks
+    nested lists inside of it.
+    Fields that have nested lists (or dicts) are coordinates, imageinfo, and entityterms.
+    '''    
+    for item in json: # coordinates manipulation
+        multiple_coordinates = False
+        if 'coordinates' in item.keys():
+            if type(item['coordinates']) == list:
+                multiple_coordinates = len(item['coordinates']) > 1
+                item['coordinates'] = item['coordinates'][0]
+            elif type(item['coordinates']) == dict:
+                multiple_coordinates = len(item['coordinates'].keys()) > 1
+                item['coordinates'] = item['coordinates'][list(item['coordinates'].keys())[0]]
+            else:
+                print('Nonstandard coordinates:', item['coordinates'])
+        item['multiple_coordinates'] = multiple_coordinates
+
+    for item in json: # imageinfo manipulation
+        multiple_imageinfo = False
+        if 'imageinfo' in item.keys():
+            if type(item['imageinfo']) == list:
+                multiple_imageinfo = len(item['imageinfo']) > 1
+                item['imageinfo'] = item['imageinfo'][0]
+            elif type(item['imageinfo']) == dict:
+                multiple_imageinfo = len(item['imageinfo'].keys()) > 1
+                item['imageinfo'] = item['imageinfo'][list(item['imageinfo'].keys())[0]]
+            else:
+                print('Nonstandard image information:', item['imageinfo'])
+        item['multiple_imageinfo'] = multiple_imageinfo
+
+    for item in json: # label manipulation
+        multiple_labels = False
+        if 'entityterms' in item.keys():
+            if 'label' in item['entityterms'].keys():
+                if type(item['entityterms']['label']) == list:
+                    multiple_labels = len(item['entityterms']['label']) > 1
+                    item['entityterms']['label'] = ';'.join(item['entityterms']['label'])
+                else:
+                    print('Nonstandard entry label:', item['entityterms']['label'])
+        item['multiple_labels'] = multiple_labels
+    
+    return json
+
 def query_at(lat, lon, radius, i, country):
     '''
     This function calls the api at the specified coordinates. If there are too many results, then the function
     calls itself on four smaller regions.
+    For each successful call, a raw version of the data is stored as a JSON, and a cleaner version (with some
+    data left out) is stored as a csv table.
     '''
     
     time.sleep(2)
@@ -97,23 +145,34 @@ def query_at(lat, lon, radius, i, country):
         return i
         
     else:
-        for ns_type in set([item['ns'] for item in response.json()]):
+        file_location_path = Path(__file__)
+        project_base_path = file_location_path.parent.parent.parent
+
+        raw_json_location_path = project_base_path / 'data' / 'raw' / Path(f'wikimap_toolforge/{country}')
+        raw_json_path = raw_json_location_path / Path(f'{country}_id{i}.json') 
+
+        raw_json_location_path.mkdir(parents = True, exist_ok = True)
+        raw_json = response.json()
+        with open(raw_json_path, 'w') as file:
+            json.dump(raw_json, file)
+        
+        preprocessed_json = preprocess_json(raw_json)
+        for ns_type in set([item['ns'] for item in preprocessed_json]):
             df = (
                 pd
-                .json_normalize([item for item in response.json() if item['ns'] == ns_type])
+                .json_normalize([item for item in preprocessed_json if item['ns'] == ns_type])
                 .assign(query_lat = lat,
                         query_lon = lon,
                         radius = radius,
+                        query_id = i,
                         country = country
                        )
             )
 
-            file_location_path = Path(__file__)
-            project_base_path = file_location_path.parent.parent.parent
-            location_path = project_base_path / 'data' / 'interim' / Path(f'wikimap_toolforge/{country}/ns{ns_type}')
-            file_path = location_path / Path(f'{country}_id{i}_ns{ns_type}.csv') 
+            df_location_path = project_base_path / 'data' / 'interim' / Path(f'wikimap_toolforge/{country}/ns{ns_type}')
+            df_path = df_location_path / Path(f'{country}_id{i}_ns{ns_type}.csv') 
 
-            location_path.mkdir(parents = True, exist_ok = True)
-            df.to_csv(file_path, index = False)
+            df_location_path.mkdir(parents = True, exist_ok = True)
+            df.to_csv(df_path, index = False)
 
         return i + 1
