@@ -1,43 +1,43 @@
-pageid,ns,title,index,coordinates,thumbnail.source,thumbnail.width,thumbnail.height,entityterms.label,query_lat,query_lon,radius
-155,0,Q41,-1,"[{'lat': 39.69181618, 'lon': 20.0084424, 'primary': False}, {'lat': 38.5, 'lon': 23, 'primary': True}, {'lat': 34.69698, 'lon': 24.09585, 'primary': False}, {'lat': 35.9229, 'lon': 29.7291, 'primary': False}, {'lat': 41.74886, 'lon': 26.17267, 'primary': False}]",https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/The_Acropolis_and_Mount_Hymettus_from_Philopappos_Hill_on_July_18%2C_2019.jpg/320px-The_Acropolis_and_Mount_Hymettus_from_Philopappos_Hill_on_July_18%2C_2019.jpg,320.0,213.0,['Greece'],39.644247915936766,20.070883070699818,10000
-21803,0,Q18731,0,"[{'lat': 39.65889, 'lon': 20.18139, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Konispol.jpg/320px-Konispol.jpg,320.0,179.0,['Konispol'],39.644247915936766,20.070883070699818,10000
-1655024,0,Q1721931,1,"[{'lat': 39.586667, 'lon': 20.142222, 'primary': False}, {'lat': 40.0349, 'lon': 20.4706, 'primary': False}, {'lat': 39.5867, 'lon': 20.1422, 'primary': False}]",https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Kalamas.jpg/320px-Kalamas.jpg,320.0,240.0,['Thyamis'],39.644247915936766,20.070883070699818,10000
-1704402,0,Q1772340,2,"[{'lat': 39.5867, 'lon': 20.1422, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Kalamas1939.JPG/320px-Kalamas1939.JPG,320.0,263.0,['Battle of Elaia–Kalamas'],39.644247915936766,20.070883070699818,10000
-3482826,0,Q3655938,3,"[{'lat': 39.68527778, 'lon': 19.98972222, 'primary': True}]",,,,['Stil Island'],39.644247915936766,20.070883070699818,10000
-4040246,0,Q4230832,4,"[{'lat': 39.67508316, 'lon': 20.17597198, 'primary': True}]",,,,['Konispol cave'],39.644247915936766,20.070883070699818,10000
-5403185,0,Q5642105,5,"[{'lat': 39.69, 'lon': 20.006, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kepi_Stillos_-Ishulli_Tongos.jpg/320px-Kepi_Stillos_-Ishulli_Tongos.jpg,320.0,209.0,['Tongo Island'],39.644247915936766,20.070883070699818,10000
-8532117,0,Q8558705,6,"[{'lat': 39.65388889, 'lon': 20.15861111, 'primary': True}]",,,,['Qafë Botë'],39.644247915936766,20.070883070699818,10000
-14551388,0,Q13037412,7,"[{'lat': 39.6964, 'lon': 20.138, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Bashkia_e_Konispolit_n%C3%AB_Hart%C3%ABn_e_Shqip%C3%ABris%C3%AB.svg/320px-Bashkia_e_Konispolit_n%C3%AB_Hart%C3%ABn_e_Shqip%C3%ABris%C3%AB.svg.png,320.0,714.0,['Konispol municipality'],39.644247915936766,20.070883070699818,10000
-14565763,0,Q13045731,8,"[{'lat': 39.6897, 'lon': 20.1233, 'primary': True}]",,,,['Shkallë'],39.644247915936766,20.070883070699818,10000
-23686414,0,Q21645767,9,"[{'lat': 39.68084, 'lon': 20.12248, 'primary': False}, {'lat': 39.680339, 'lon': 20.117681, 'primary': False}]",,,,['Cestrina'],39.644247915936766,20.070883070699818,10000
-23692722,0,Q21652238,10,"[{'lat': 39.68083889, 'lon': 20.12248056, 'primary': True}]",,,,['Çukë e Ajtoit'],39.644247915936766,20.070883070699818,10000
-24034546,0,Q22002788,11,"[{'lat': 39.71194444, 'lon': 20.01333333, 'primary': True}]",,,,['Stilos'],39.644247915936766,20.070883070699818,10000
-24034581,0,Q22002823,12,"[{'lat': 39.66667, 'lon': 20.11667, 'primary': True}]",,,,['Leko'],39.644247915936766,20.070883070699818,10000
-24034608,0,Q22002850,13,"[{'lat': 39.7075, 'lon': 20.1408, 'primary': True}]",,,,['Tupal'],39.644247915936766,20.070883070699818,10000
-24034613,0,Q22002855,14,"[{'lat': 39.7, 'lon': 20.03333, 'primary': True}]",,,,['Aeri'],39.644247915936766,20.070883070699818,10000
-24034614,0,Q22002856,15,"[{'lat': 39.65, 'lon': 20.13333, 'primary': True}]",,,,['Aspropotamos'],39.644247915936766,20.070883070699818,10000
-24034616,0,Q22002858,16,"[{'lat': 39.7, 'lon': 20.05, 'primary': True}]",,,,['Cingeli'],39.644247915936766,20.070883070699818,10000
-24034617,0,Q22002859,17,"[{'lat': 39.6492, 'lon': 20.18, 'primary': True}]",,,,['Eglise'],39.644247915936766,20.070883070699818,10000
-24034618,0,Q22002860,18,"[{'lat': 39.6846, 'lon': 20.0111, 'primary': True}]",,,,['Gjiri i Ftelias'],39.644247915936766,20.070883070699818,10000
-24034619,0,Q22002861,19,"[{'lat': 39.6808, 'lon': 20.0908, 'primary': True}]",,,,['Orle'],39.644247915936766,20.070883070699818,10000
-24034620,0,Q22002862,20,"[{'lat': 39.7, 'lon': 20.03333, 'primary': True}]",,,,['Sata'],39.644247915936766,20.070883070699818,10000
-24039394,0,Q22007675,21,"[{'lat': 39.68389, 'lon': 19.98417, 'primary': True}]",,,,['Ishulli i Stilit'],39.644247915936766,20.070883070699818,10000
-24039395,0,Q22007676,22,"[{'lat': 39.68972, 'lon': 19.98139, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/ISS028-E-12041_-_View_of_Albania_%28Stillo%29.jpg/320px-ISS028-E-12041_-_View_of_Albania_%28Stillo%29.jpg,320.0,304.0,['Kepi i Stilit'],39.644247915936766,20.070883070699818,10000
-26859985,0,Q24899402,23,"[{'lat': 39.638, 'lon': 20.1395, 'primary': True}]",,,,['Strovili cape'],39.644247915936766,20.070883070699818,10000
-26884513,0,Q24924282,24,"[{'lat': 39.61611111, 'lon': 20.1725, 'primary': True}]",,,,['Sagiada bay'],39.644247915936766,20.070883070699818,10000
-26974125,0,Q25014587,25,"[{'lat': 39.66277778, 'lon': 20.08888889, 'primary': True}]",,,,['Pagania cape'],39.644247915936766,20.070883070699818,10000
-26974142,0,Q25014605,26,"[{'lat': 39.66578, 'lon': 20.08812, 'primary': True}]",,,,['Pagania bay'],39.644247915936766,20.070883070699818,10000
-26976152,0,Q25016633,27,"[{'lat': 39.6734, 'lon': 20.0662, 'primary': True}]",,,,['Akra Nenoudha'],39.644247915936766,20.070883070699818,10000
-26984455,0,Q25024753,28,"[{'lat': 39.65361111, 'lon': 20.11083333, 'primary': True}]",,,,['Kouramos bay'],39.644247915936766,20.070883070699818,10000
-26994600,0,Q25035176,29,"[{'lat': 39.67833333, 'lon': 20.05444444, 'primary': True}]",,,,['Kato Aetos bay'],39.644247915936766,20.070883070699818,10000
-27053554,0,Q25094341,30,"[{'lat': 39.57666667, 'lon': 20.03472222, 'primary': True}]",,,,['Kerkyra Strait'],39.644247915936766,20.070883070699818,10000
-27064547,0,Q25105381,31,"[{'lat': 39.64756, 'lon': 20.15385, 'primary': True}, {'lat': 39.64638889, 'lon': 20.15722222, 'primary': False}]",,,,['Arkoudi'],39.644247915936766,20.070883070699818,10000
-27076532,0,Q25117294,32,"[{'lat': 39.58555556, 'lon': 20.12055556, 'primary': True}]",,,,['Avathi Thiamidos'],39.644247915936766,20.070883070699818,10000
-27076534,0,Q25117296,33,"[{'lat': 39.65138889, 'lon': 20.10138889, 'primary': True}]",,,,['Akra Akonia'],39.644247915936766,20.070883070699818,10000
-27076535,0,Q25117297,34,"[{'lat': 39.67027778, 'lon': 20.04833333, 'primary': True}]",,,,['Ífalos Káto Aetoú'],39.644247915936766,20.070883070699818,10000
-67008218,0,Q67402376,35,"[{'lat': 39.65215, 'lon': 20.15976, 'primary': True}]",,,,['Konispol border post'],39.644247915936766,20.070883070699818,10000
-67008379,0,Q67402460,36,"[{'lat': 39.65181, 'lon': 20.15832, 'primary': True}]",,,,['Sagiada border post'],39.644247915936766,20.070883070699818,10000
-95745558,0,Q97314850,37,"[{'lat': 39.7, 'lon': 20, 'primary': True}]",https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Butrinti%2C_Sarande_04.jpg/320px-Butrinti%2C_Sarande_04.jpg,320.0,160.0,['Korafi Hills'],39.644247915936766,20.070883070699818,10000
-105901225,0,Q110880077,38,"[{'lat': 39.69003, 'lon': 20.062502, 'primary': False}, {'lat': 39.685, 'lon': 20.0625, 'primary': False}]",,,,['Kato Aetos'],39.644247915936766,20.070883070699818,10000
-108424897,0,Q113660543,39,"[{'lat': 39.639032, 'lon': 20.141946, 'primary': True}]",,,,['Fortress of Strovili'],39.644247915936766,20.070883070699818,10000
-111747483,0,Q116954420,40,"[{'lat': 39.62567, 'lon': 20.18101, 'primary': True}]",,,,"['Bust of Grigorios Tsonkas, Sagiada']",39.644247915936766,20.070883070699818,10000
+pageid,ns,title,index,multiple_coordinates,multiple_imageinfo,multiple_labels,coordinates.lat,coordinates.lon,coordinates.primary,thumbnail.source,thumbnail.width,thumbnail.height,entityterms.label,query_lat,query_lon,radius,query_id,country
+155,0,Q41,-1,True,False,False,39.69181618,20.0084424,False,https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/The_Acropolis_and_Mount_Hymettus_from_Philopappos_Hill_on_July_18%2C_2019.jpg/320px-The_Acropolis_and_Mount_Hymettus_from_Philopappos_Hill_on_July_18%2C_2019.jpg,320.0,213.0,Greece,39.644247915936766,20.070883070699814,10000,0,AL
+21803,0,Q18731,0,False,False,False,39.65889,20.18139,True,https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Konispol.jpg/320px-Konispol.jpg,320.0,179.0,Konispol,39.644247915936766,20.070883070699814,10000,0,AL
+1655024,0,Q1721931,1,True,False,False,39.586667,20.142222,False,https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Kalamas.jpg/320px-Kalamas.jpg,320.0,240.0,Thyamis,39.644247915936766,20.070883070699814,10000,0,AL
+1704402,0,Q1772340,2,False,False,False,39.5867,20.1422,True,https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Kalamas1939.JPG/320px-Kalamas1939.JPG,320.0,263.0,Battle of Elaia–Kalamas,39.644247915936766,20.070883070699814,10000,0,AL
+3482826,0,Q3655938,3,False,False,False,39.68527778,19.98972222,True,,,,Stil Island,39.644247915936766,20.070883070699814,10000,0,AL
+4040246,0,Q4230832,4,False,False,False,39.67508316,20.17597198,True,,,,Konispol cave,39.644247915936766,20.070883070699814,10000,0,AL
+5403185,0,Q5642105,5,False,False,False,39.69,20.006,True,https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/Kepi_Stillos_-Ishulli_Tongos.jpg/320px-Kepi_Stillos_-Ishulli_Tongos.jpg,320.0,209.0,Tongo Island,39.644247915936766,20.070883070699814,10000,0,AL
+8532117,0,Q8558705,6,False,False,False,39.65388889,20.15861111,True,,,,Qafë Botë,39.644247915936766,20.070883070699814,10000,0,AL
+14551388,0,Q13037412,7,False,False,False,39.6964,20.138,True,https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Bashkia_e_Konispolit_n%C3%AB_Hart%C3%ABn_e_Shqip%C3%ABris%C3%AB.svg/320px-Bashkia_e_Konispolit_n%C3%AB_Hart%C3%ABn_e_Shqip%C3%ABris%C3%AB.svg.png,320.0,714.0,Konispol municipality,39.644247915936766,20.070883070699814,10000,0,AL
+14565763,0,Q13045731,8,False,False,False,39.6897,20.1233,True,,,,Shkallë,39.644247915936766,20.070883070699814,10000,0,AL
+23686414,0,Q21645767,9,True,False,False,39.68084,20.12248,False,,,,Cestrina,39.644247915936766,20.070883070699814,10000,0,AL
+23692722,0,Q21652238,10,False,False,False,39.68083889,20.12248056,True,,,,Çukë e Ajtoit,39.644247915936766,20.070883070699814,10000,0,AL
+24034546,0,Q22002788,11,False,False,False,39.71194444,20.01333333,True,,,,Stilos,39.644247915936766,20.070883070699814,10000,0,AL
+24034581,0,Q22002823,12,False,False,False,39.66667,20.11667,True,,,,Leko,39.644247915936766,20.070883070699814,10000,0,AL
+24034608,0,Q22002850,13,False,False,False,39.7075,20.1408,True,,,,Tupal,39.644247915936766,20.070883070699814,10000,0,AL
+24034613,0,Q22002855,14,False,False,False,39.7,20.03333,True,,,,Aeri,39.644247915936766,20.070883070699814,10000,0,AL
+24034614,0,Q22002856,15,False,False,False,39.65,20.13333,True,,,,Aspropotamos,39.644247915936766,20.070883070699814,10000,0,AL
+24034616,0,Q22002858,16,False,False,False,39.7,20.05,True,,,,Cingeli,39.644247915936766,20.070883070699814,10000,0,AL
+24034617,0,Q22002859,17,False,False,False,39.6492,20.18,True,,,,Eglise,39.644247915936766,20.070883070699814,10000,0,AL
+24034618,0,Q22002860,18,False,False,False,39.6846,20.0111,True,,,,Gjiri i Ftelias,39.644247915936766,20.070883070699814,10000,0,AL
+24034619,0,Q22002861,19,False,False,False,39.6808,20.0908,True,,,,Orle,39.644247915936766,20.070883070699814,10000,0,AL
+24034620,0,Q22002862,20,False,False,False,39.7,20.03333,True,,,,Sata,39.644247915936766,20.070883070699814,10000,0,AL
+24039394,0,Q22007675,21,False,False,False,39.68389,19.98417,True,,,,Ishulli i Stilit,39.644247915936766,20.070883070699814,10000,0,AL
+24039395,0,Q22007676,22,False,False,False,39.68972,19.98139,True,https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/ISS028-E-12041_-_View_of_Albania_%28Stillo%29.jpg/320px-ISS028-E-12041_-_View_of_Albania_%28Stillo%29.jpg,320.0,304.0,Kepi i Stilit,39.644247915936766,20.070883070699814,10000,0,AL
+26859985,0,Q24899402,23,False,False,False,39.638,20.1395,True,,,,Strovili cape,39.644247915936766,20.070883070699814,10000,0,AL
+26884513,0,Q24924282,24,False,False,False,39.61611111,20.1725,True,,,,Sagiada bay,39.644247915936766,20.070883070699814,10000,0,AL
+26974125,0,Q25014587,25,False,False,False,39.66277778,20.08888889,True,,,,Pagania cape,39.644247915936766,20.070883070699814,10000,0,AL
+26974142,0,Q25014605,26,False,False,False,39.66578,20.08812,True,,,,Pagania bay,39.644247915936766,20.070883070699814,10000,0,AL
+26976152,0,Q25016633,27,False,False,False,39.6734,20.0662,True,,,,Akra Nenoudha,39.644247915936766,20.070883070699814,10000,0,AL
+26984455,0,Q25024753,28,False,False,False,39.65361111,20.11083333,True,,,,Kouramos bay,39.644247915936766,20.070883070699814,10000,0,AL
+26994600,0,Q25035176,29,False,False,False,39.67833333,20.05444444,True,,,,Kato Aetos bay,39.644247915936766,20.070883070699814,10000,0,AL
+27053554,0,Q25094341,30,False,False,False,39.57666667,20.03472222,True,,,,Kerkyra Strait,39.644247915936766,20.070883070699814,10000,0,AL
+27064547,0,Q25105381,31,True,False,False,39.64756,20.15385,True,,,,Arkoudi,39.644247915936766,20.070883070699814,10000,0,AL
+27076532,0,Q25117294,32,False,False,False,39.58555556,20.12055556,True,,,,Avathi Thiamidos,39.644247915936766,20.070883070699814,10000,0,AL
+27076534,0,Q25117296,33,False,False,False,39.65138889,20.10138889,True,,,,Akra Akonia,39.644247915936766,20.070883070699814,10000,0,AL
+27076535,0,Q25117297,34,False,False,False,39.67027778,20.04833333,True,,,,Ífalos Káto Aetoú,39.644247915936766,20.070883070699814,10000,0,AL
+67008218,0,Q67402376,35,False,False,False,39.65215,20.15976,True,,,,Konispol border post,39.644247915936766,20.070883070699814,10000,0,AL
+67008379,0,Q67402460,36,False,False,False,39.65181,20.15832,True,,,,Sagiada border post,39.644247915936766,20.070883070699814,10000,0,AL
+95745558,0,Q97314850,37,False,False,False,39.7,20.0,True,https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Butrinti%2C_Sarande_04.jpg/320px-Butrinti%2C_Sarande_04.jpg,320.0,160.0,Korafi Hills,39.644247915936766,20.070883070699814,10000,0,AL
+105901225,0,Q110880077,38,True,False,False,39.69003,20.062502,False,,,,Kato Aetos,39.644247915936766,20.070883070699814,10000,0,AL
+108424897,0,Q113660543,39,False,False,False,39.639032,20.141946,True,,,,Fortress of Strovili,39.644247915936766,20.070883070699814,10000,0,AL
+111747483,0,Q116954420,40,False,False,False,39.62567,20.18101,True,,,,"Bust of Grigorios Tsonkas, Sagiada",39.644247915936766,20.070883070699814,10000,0,AL
