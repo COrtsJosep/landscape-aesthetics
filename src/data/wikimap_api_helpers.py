@@ -113,6 +113,21 @@ def preprocess_json(json):
     
     return json
 
+def crop_overseas(shape):
+    ''' 
+    Crops islands and overseas territories from a shapely multipolygon.
+    Having territories very far away from the mainland kind of mess with 
+    the grid generating algorithm.
+    '''
+    if type(shape) == shapely.geometry.MultiPolygon:
+        newshape_list = []
+        for geom in list(shape.geoms):
+            if not (geom.centroid.y < 34 or (geom.centroid.y < 43 and geom.centroid.x < -11.5)):
+                newshape_list.append(geom)
+        shape = shapely.geometry.MultiPolygon(newshape_list)
+
+    return shape
+
 def query_at(lat, lon, radius, i, country):
     '''
     This function calls the api at the specified coordinates. If there are too many results, then the function
@@ -121,17 +136,30 @@ def query_at(lat, lon, radius, i, country):
     data left out) is stored as a csv table.
     '''
     
-    time.sleep(2)
+    time.sleep(5) # one request every 5 seconds max
     
+    headers = {
+        'User-Agent': 'API Caller - please do not block us - send us a message!' ,
+        'From': 'josep.cunqueroorts@uzh.ch'
+    }
     query_string = f'https://wikimap.toolforge.org/api.php?wp=false&cluster=false&dist={radius}&lat={lat}&lon={lon}&commons&allco=true&project=wikidata'
-    response = requests.get(query_string)
+
+    responded = False
     times_slept = 0
-    while response.status_code != 200:
-        print(f'Got code {response.status_code} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {2*times_slept} seconds and then trying again.') 
+    while not responded or response.status_code != 200:
+        try:
+            response = requests.get(query_string, headers = headers, timeout = 60)
+            responded = True
+        except Exception as e:
+            print(f'Got exception {e} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {2*times_slept} seconds and then trying again.') 
+            responded = False
+            
+        if responded and response.status_code != 200:
+            print(f'Got code {response.status_code} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {2*times_slept} seconds and then trying again.') 
+        
         time.sleep(2*times_slept)
         times_slept += 1
-        response = requests.get(query_string)
-
+        
     n = len(response.json())
     if n == 0:
         return i
