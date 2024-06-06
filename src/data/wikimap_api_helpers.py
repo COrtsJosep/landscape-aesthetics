@@ -136,7 +136,7 @@ def query_at(lat, lon, radius, i, country):
     data left out) is stored as a csv table.
     '''
     
-    time.sleep(5) # one request every 5 seconds max
+    time.sleep(7.5) # one request every 7.5 seconds max
     
     headers = {
         'User-Agent': 'API Caller - please do not block us - send us a message!' ,
@@ -151,13 +151,15 @@ def query_at(lat, lon, radius, i, country):
             response = requests.get(query_string, headers = headers, timeout = 60)
             responded = True
         except Exception as e:
-            print(f'Got exception {e} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {2*times_slept} seconds and then trying again.') 
+            print(f'Got exception {e} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {5*times_slept} seconds and then trying again.') 
             responded = False
             
         if responded and response.status_code != 200:
-            print(f'Got code {response.status_code} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {2*times_slept} seconds and then trying again.') 
+            print(f'Got code {response.status_code} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {5*times_slept} seconds and then trying again.') 
         
-        time.sleep(2*times_slept)
+        time.sleep(5*times_slept)
+        if times_slept > 5:
+            input('Temporarily stopped. Press any key to resume: ')
         times_slept += 1
         
     n = len(response.json())

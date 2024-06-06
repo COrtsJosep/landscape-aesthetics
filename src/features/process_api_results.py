@@ -15,9 +15,11 @@ rename_dict = {
 def process_df(df_path):
     df = pd.read_csv(df_path)
 
-    df = df.rename(columns = rename_dict)
-    df.columns = [x.replace('.', '_') for x in df.columns.to_list()]
+    df = df.rename(columns = rename_dict) # rename accoding to convention
+    df.columns = [x.replace('.', '_') for x in df.columns.to_list()] # no dots in the column names
     df = df.loc[~df.loc[:, 'resource_lat'].isna()] # drop if coordinates are empty
+    df = df.drop_duplicates(subset = 'title') # no duplicates (title is the unique identifier)
+    df = df.loc[~df.loc[:, 'title'].apply(lambda title: 'view of earth' in title.lower())] # we do not want pictures from space
 
     return df
 
@@ -37,7 +39,7 @@ for ns_type in ns_types:
     (
         pd
         .concat(dfs)
-        .drop_duplicates(subset = ['pageid', 'title'])
+        .drop_duplicates(subset = 'title') # again drop duplicates, for close-border cases
         .reset_index()
         .to_parquet(output_path, index = False)
     )
