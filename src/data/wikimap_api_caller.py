@@ -11,7 +11,7 @@ geo_df = geopandas.read_file(shapefile_path)
 
 radius = 10000
 
-for _, row in geo_df.query('LEVL_CODE == 0').loc[14:].iterrows():
+for _, row in geo_df.query('LEVL_CODE == 0').loc[17:].iterrows():
     country = row['NUTS_ID']
     shape = wikimap_api_helpers.crop_overseas(row['geometry'])
 
@@ -21,4 +21,4 @@ for _, row in geo_df.query('LEVL_CODE == 0').loc[14:].iterrows():
         if relevant_point:
             i = wikimap_api_helpers.query_at(lat, lon, radius, i, country)
 
-    time.sleep(60*5)
+    time.sleep(60*15)
