@@ -30,7 +30,9 @@ ns_types = set(ns_foldernames)
 
 for ns_type in ns_types:
     dfs = []
+    print('\nNS type:', ns_type)
     for country_path in wikimap_path.glob('*'):
+        print('Just begun with', country_path.name)
         dfs += [process_df(df_path) for df_path in (country_path / ns_type).glob('*.csv')]
     
     output_path = project_base_path / 'data' / 'processed' / 'wikimap_toolforge' / f'{ns_type}.parquet'
