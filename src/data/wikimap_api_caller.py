@@ -7,11 +7,16 @@ import wikimap_api_helpers
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 shapefile_path = project_base_path / 'data' / 'external' / 'geoshapes' / 'country_geoshapes.shx'
-geo_df = geopandas.read_file(shapefile_path)
-
+geo_df = (
+    geopandas
+    .read_file(shapefile_path)
+    .query('LEVL_CODE == 0')
+    .reset_index()
+)
+    
 radius = 10000
 
-for _, row in geo_df.query('LEVL_CODE == 0').loc[17:].iterrows():
+for _, row in geo_df.loc[23:].iterrows():
     country = row['NUTS_ID']
     shape = wikimap_api_helpers.crop_overseas(row['geometry'])
 
