@@ -1,8 +1,10 @@
+import io
 import json
 import time
 import requests
 import urllib.parse
 import pandas as pd
+from PIL import Image
 from pathlib import Path
 
 file_location_path = Path(__file__)
@@ -36,11 +38,36 @@ def call_api(query_string, rest_time, task):
 
     return response
 
-def transform_image(image_path):
-    # transform the image, as in: rescale, crop, convert to grayscale, convert to jpeg... to be decided
-    ...
-    new_image_path = image_path
-    return new_image_path
+def center_crop(image):
+    '''
+    Takes a PIL image as input. Crops it to a square with side length equal
+    to the shorter side of the original size, centered at the middle of the 
+    image. Returns that.
+    '''
+    width, height = image.size
+    new_side = min(width, height)
+    
+    left = (width - new_side)/2
+    top = (height - new_side)/2
+    right = (width + new_side)/2
+    bottom = (height + new_side)/2
+    
+    return image.crop((left, top, right, bottom))
+
+
+def transform_image(image):
+    '''
+    Takes a PIL image, transforms it, and returns it. Transformations by now are:
+        - center crop,
+        - resize to 224x224, and
+        - convert to RGB color mode (3 color channels: Red Green Blue).
+    '''
+    # TO FULLY DECIDE
+    # TODO: what if operations fail?
+    image = center_crop(image) # center crop (select a square with shorter side)
+    image = image.resize((224, 224)) # resize to a 224x224 square
+    image = image.convert('RGB') # convert to RGB
+    return image
 
 def store_metadata(metadata, country, ns_type, query_id, title):
     '''
@@ -63,13 +90,15 @@ def download_image(url, country, ns_type, query_id, title):
     Downloads an image at a path determined by the attributes of the image.
     '''
     resource_destination = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'images' / country / ns_type / str(query_id) / title
+    resource_destination = resource_destination.with_suffix('.jpeg') # whatever it is, it will be converted to jpeg
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
 
     response = call_api(query_string = url, rest_time = 0, task = 'fetch image')
-    with open(resource_destination, 'wb') as f:
-        f.write(response.content)
-    resource_location = transform_image(resource_destination)
-    return str(resource_location.relative_to(project_base_path))
+    image = Image.open(io.BytesIO(response.content))
+    image = transform_image(image)
+    image.save(resource_destination)
+
+    return str(resource_destination.relative_to(project_base_path))
 
 def download_batch(batch, ns_type):
     titles_lst = [urllib.parse.quote(title) for title in batch.loc[:, 'title'].tolist()] # in case of weird characters
