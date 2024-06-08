@@ -101,8 +101,8 @@ def download_image(url, country, ns_type, query_id, title):
     return str(resource_destination.relative_to(project_base_path))
 
 def download_batch(batch, ns_type):
-    titles_lst = [urllib.parse.quote(title) for title in batch.loc[:, 'title'].tolist()] # in case of weird characters
-    titles_str = '|'.join(titles_lst) # separate them with |s
+    titles_list = [urllib.parse.quote(title) for title in batch.loc[:, 'title'].tolist()] # in case of weird characters
+    titles_str = '|'.join(titles_list) # separate them with |s
     
     api_query = f'https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url|mediatype|metadata|extmetadata|badfile&titles={titles_str}&format=json'
 
@@ -123,10 +123,10 @@ def download_batch(batch, ns_type):
         #print('Titles were normalized. See:', response_json['query']['normalized'])
             
     pages_dct = response_json['query']['pages']
-    pages_lst = [pages_dct[key] for key in pages_dct.keys()]
-    cleaned_pages_lst = []
+    pages_list = [pages_dct[key] for key in pages_dct.keys()]
+    cleaned_pages_list = []
     
-    for page in pages_lst: # write documentation
+    for page in pages_list: # write documentation
         normalized_title = page['title']
         unnormalized_title = renaming_dict[normalized_title]
         page['normalized_title'] = normalized_title
@@ -160,7 +160,7 @@ def download_batch(batch, ns_type):
         del page['title']
         del page['imageinfo']
 
-        cleaned_pages_lst.append(page)       
+        cleaned_pages_list.append(page)       
     
     df_destination = (
         project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'dataframes' 
@@ -169,7 +169,7 @@ def download_batch(batch, ns_type):
     df_destination.parent.mkdir(parents = True, exist_ok = True)
     
     existing_df = pd.read_csv(df_destination) if df_destination.exists() else None
-    current_df = pd.json_normalize(cleaned_pages_lst)
+    current_df = pd.json_normalize(cleaned_pages_list)
     
     (
         pd

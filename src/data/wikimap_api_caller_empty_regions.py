@@ -20,6 +20,8 @@ geo_df = (
     .reset_index()
 )
 
+radius = 10000
+
 for _, row in geo_df.iterrows():
     country = row['NUTS_ID']
     shape = wikimap_api_helpers.crop_overseas(row['geometry'])
@@ -29,7 +31,6 @@ for _, row in geo_df.iterrows():
         df_responses = pd.concat([pd.read_csv(path) for path in (country_response_path / 'ns6').glob('*.csv')])
         assessed_coordinates = [(row['query_lat'], row['query_lon']) for _, row in df_responses.loc[:, ['query_lat', 'query_lon']].drop_duplicates().iterrows()]
         
-        is_empty_list = []
         lats, lons, mask = wikimap_api_helpers.get_query_points(shape)
         for lat, lon, relevant_point in tqdm(zip(lats, lons, mask), desc = country, total = len(lats)):
             if relevant_point:
@@ -37,15 +38,7 @@ for _, row in geo_df.iterrows():
                 is_contained_list = [circle.contains(shapely.Point(assessed_lon, assessed_lat)) 
                                     for assessed_lat, assessed_lon in assessed_coordinates]
                 is_empty = not any(is_contained_list)
-                is_empty_list.append(is_empty)
-
-        plt.scatter(np.array(lons)[mask],
-            np.array(lats)[mask],
-            c = is_empty_list)
-        plt.suptitle(country)
-        plt.title('Prop of empty: ' + str(round(np.array(is_empty_list).mean(), 3))) 
-        plt.show()
-                    
-
-    
-            
+                if is_empty:
+                    i = wikimap_api_helpers.get_highest_id(country)
+                    wikimap_api_helpers.query_at(lat, lon, radius, i, country)
+                    time.sleep(1)
