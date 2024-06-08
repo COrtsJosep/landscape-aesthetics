@@ -1,3 +1,4 @@
+import re
 import math
 import time
 import json
@@ -127,6 +128,24 @@ def crop_overseas(shape):
         shape = shapely.geometry.MultiPolygon(newshape_list)
 
     return shape
+
+def get_highest_id(country):
+    '''
+    Given a country code, returns the maximum query ID executed (which returned)
+    results for that country.
+    '''
+    file_location_path = Path(__file__)
+    project_base_path = file_location_path.parent.parent.parent
+    country_path = project_base_path / 'data' / 'interim' / 'wikimap_toolforge' / country
+
+    ns_type_max = []
+    for ns_type in [path.name for path in country_path.glob('*')]:
+        csv_name_list = [path.name for path in (country_path / ns_type).glob('*.csv')]
+        ns_type_max.append(
+            max([int(re.search(r'id(\d+)_', name).groups()[0]) for name in csv_name_list])
+        )
+
+    return max(ns_type_max)
 
 def query_at(lat, lon, radius, i, country):
     '''
