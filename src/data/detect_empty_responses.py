@@ -25,7 +25,7 @@ for _, row in geo_df.iterrows():
     shape = wikimap_api_helpers.crop_overseas(row['geometry'])
 
     country_response_path = responses_path / country
-    if country_response_path.exists() and country == 'SE':
+    if country_response_path.exists(): #and country == 'SK':
         df_responses = pd.concat([pd.read_csv(path) for path in (country_response_path / 'ns6').glob('*.csv')])
         assessed_coordinates = [(row['query_lat'], row['query_lon']) for _, row in df_responses.loc[:, ['query_lat', 'query_lon']].drop_duplicates().iterrows()]
         
@@ -38,10 +38,11 @@ for _, row in geo_df.iterrows():
                                     for assessed_lat, assessed_lon in assessed_coordinates]
                 is_empty = not any(is_contained_list)
                 is_empty_list.append(is_empty)
-
-        plt.scatter(np.array(lons)[mask],
-            np.array(lats)[mask],
-            c = is_empty_list)
-        plt.suptitle(country)
-        plt.title('Prop of empty: ' + str(round(np.array(is_empty_list).mean(), 3))) 
-        plt.show()
+        empty_prop = round(np.array(is_empty_list).mean(), 3)
+        if empty_prop > 0:
+            plt.scatter(np.array(lons)[mask],
+                np.array(lats)[mask],
+                c = is_empty_list)
+            plt.suptitle(country)
+            plt.title('Prop of empty: ' + str(empty_prop)) 
+            plt.show()
