@@ -45,7 +45,3 @@ for _, row in geo_df.iterrows():
         plt.suptitle(country)
         plt.title('Prop of empty: ' + str(round(np.array(is_empty_list).mean(), 3))) 
         plt.show()
-                    
-
-    
-            

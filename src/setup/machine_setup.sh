@@ -12,7 +12,7 @@ rm Anaconda3-2024.02-1-Linux-x86_64.sh # remove installer
 conda create -n geoproject python=3.12 # create environment geoproject
 conda activate geoproject # turn it on babe
 conda install numpy pandas geopandas requests
-conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet
+conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet basemap
 
 # TODO: clone the repository
 cd /home/ubuntu/.ssh
