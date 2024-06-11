@@ -2,5 +2,6 @@ data/external/
 data/raw/
 data/processed/
 data/interim/
+reports/figures/*.pdf
 **/__pycache__/
 .ipynb_checkpoints/
