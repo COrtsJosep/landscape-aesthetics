@@ -3,6 +3,8 @@ from PIL import Image
 from tqdm import tqdm
 from pathlib import Path
 
+# This programm verifies that all images from geograph.org.uk
+# are downloaded, openable and uncorrupted. Just a sanity check.
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 son_path = project_base_path / 'data' / 'external' / 'scenicornot'

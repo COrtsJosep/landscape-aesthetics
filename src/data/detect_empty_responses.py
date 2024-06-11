@@ -8,6 +8,10 @@ from pathlib import Path
 import wikimap_api_helpers
 from matplotlib import pyplot as plt
 
+# program to plot the (relevant points of the) coordinate grid of each country,
+# and see where the API calls returned values, and where not. The code is very
+# similar to wikimap_api_caller_empty_regions.py, please check the comments there.
+# The only difference is that here we plot at the end.
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 shapefile_path = project_base_path / 'data' / 'external' / 'geoshapes' / 'country_geoshapes.shx'

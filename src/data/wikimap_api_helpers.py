@@ -8,6 +8,8 @@ import pandas as pd
 from pathlib import Path
 from geopy import distance
 
+# helpers to call the wikimap toolforge API
+
 def generate_circle(point, radius = 10000):
     '''
     There are two ways of generate the grid of points where to evaluate the API: 
@@ -153,6 +155,8 @@ def query_at(lat, lon, radius, i, country):
     calls itself on four smaller regions.
     For each successful call, a raw version of the data is stored as a JSON, and a cleaner version (with some
     data left out) is stored as a csv table.
+    Notice: the variable i is the id of the query: i increases with every successful query and is left unchanged 
+    when the query returns no results.
     '''
     
     time.sleep(7.5) # one request every 7.5 seconds max
@@ -165,7 +169,7 @@ def query_at(lat, lon, radius, i, country):
 
     responded = False
     times_slept = 0
-    while not responded or response.status_code != 200:
+    while not responded or response.status_code != 200: # try again and again until we get a valid answer
         try:
             response = requests.get(query_string, headers = headers, timeout = 60)
             responded = True
@@ -176,16 +180,21 @@ def query_at(lat, lon, radius, i, country):
         if responded and response.status_code != 200:
             print(f'Got code {response.status_code} at coordinates({round(lat, 2)}, {round(lon, 2)}). Waiting {5*times_slept} seconds and then trying again.') 
         
-        time.sleep(5*times_slept)
-        if times_slept > 5:
-            input('Temporarily stopped. Press any key to resume: ')
+        time.sleep(5*times_slept) # take a break after a failed call. progressively longer as failed times accumulate
+        if times_slept > 5: # take an indefinite break after too many failed attempts
+            input('Temporarily stopped. Press any key to resume: ') # restart only at human command
         times_slept += 1
-        
+
+    # at this point of the code, we have a response already
     n = len(response.json())
     if n == 0:
-        return i
+        return i # if no objects in the coordinate, just end and go to the next
         
-    elif n > 800:
+    elif n > 800: 
+        # if the API call returns more than 800, my intuition tells me that there are more results, but the API
+        # is not returning them (maybe there is a cap on # of objects returned). In that case, call the API at
+        # 4 coordinates, at a distance of radius/2 metres from the centre, in direction NW, NE, SW, SE, and with radii
+        # radius/2. 
         new_radius = int(radius / 2)
         for j in range(4):
             new_lat, new_lon, _ = distance.geodesic(meters = new_radius).destination((lat, lon), bearing = 45+j*90)
@@ -194,9 +203,11 @@ def query_at(lat, lon, radius, i, country):
         return i
         
     else:
+        # The API has returned 0 < n <= 800 results. In that case, we download and save the results.
         file_location_path = Path(__file__)
         project_base_path = file_location_path.parent.parent.parent
 
+        # download raw response as JSON
         raw_json_location_path = project_base_path / 'data' / 'raw' / Path(f'wikimap_toolforge/{country}')
         raw_json_path = raw_json_location_path / Path(f'{country}_id{i}.json') 
 
@@ -204,7 +215,8 @@ def query_at(lat, lon, radius, i, country):
         raw_json = response.json()
         with open(raw_json_path, 'w') as file:
             json.dump(raw_json, file)
-        
+
+        # process the response slightly, and save it as a csv
         preprocessed_json = preprocess_json(raw_json)
         for ns_type in set([item['ns'] for item in preprocessed_json]):
             df = (
