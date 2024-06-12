@@ -44,7 +44,7 @@ for _, row in geo_df.iterrows():
                     if shapely.contains_xy(circle, assessed_lon, assessed_lat):
                         is_empty = False
                         break
-                        
+
                 is_empty_list.append(is_empty)
         empty_prop = round(np.array(is_empty_list).mean(), 3)
         if empty_prop > 0:

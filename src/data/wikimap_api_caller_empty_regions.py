@@ -31,12 +31,12 @@ radius = 10000
 for _, row in geo_df.iterrows():
     country = row['NUTS_ID']
     shape = wikimap_api_helpers.crop_overseas(row['geometry'])
-
+    
     # load the responses we have gotten so far. since each csv corresponds to a successful API call, all rows
     # of a single csv have the same values for the columns query_lon and query_lat, so we only need to load
     # the first row :)
     # assessed_coordinates is just the info in a list form.
-    df_responses = pd.concat([pd.read_csv(path, n_rows = 1) for path in (responses_path / country / 'ns0').glob('*.csv')])
+    df_responses = pd.concat([pd.read_csv(path, nrows = 1) for path in (responses_path / country / 'ns0').glob('*.csv')])
     assessed_coordinates = [(row['query_lat'], row['query_lon']) for _, row in df_responses.loc[:, ['query_lat', 'query_lon']].drop_duplicates().iterrows()]
     del df_responses
     
@@ -47,7 +47,7 @@ for _, row in geo_df.iterrows():
             # at each grid point, we create a circle of (almost) full radius. Then we check if
             # we have any results that were queried inside of that circle.
             # If not, then the point is empty.
-            circle = wikimap_api_helpers.generate_circle(shapely.Point(lon, lat), radius = 9500)
+            circle = wikimap_api_helpers.generate_circle(shapely.Point(lon, lat), radius = 7500)
             is_empty = True
 
             for assessed_lat, assessed_lon in assessed_coordinates:
