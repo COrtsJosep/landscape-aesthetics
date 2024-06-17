@@ -11,14 +11,14 @@ file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 headers = {'User-Agent': 'WikimediaCallerBot/1.0 (josep.cunqueroorts@uzh.ch)'}
 
-def call_api(query_string, rest_time, task):
+def call_api(url, rest_time, task, params = None):
     time.sleep(rest_time)
     
     responded = False
     times_slept = 0
     while not responded or response.status_code != 200:
         try:
-            response = requests.get(query_string, headers = headers, timeout = 60)
+            response = requests.get(url, params = params, headers = headers, timeout = 60)
             responded = True
         except Exception as e:
             print(f'Got exception {e} at task "{task}". Waiting {5*times_slept} seconds and then trying again.') 
@@ -93,7 +93,7 @@ def download_image(url, country, ns_type, query_id, title):
     resource_destination = resource_destination.with_suffix('.jpeg') # whatever it is, it will be converted to jpeg
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
 
-    response = call_api(query_string = url, rest_time = 0, task = 'fetch image')
+    response = call_api(url = url, rest_time = 0, task = 'fetch image')
     image = Image.open(io.BytesIO(response.content))
     image = transform_image(image)
     image.save(resource_destination)
@@ -101,16 +101,24 @@ def download_image(url, country, ns_type, query_id, title):
     return str(resource_destination.relative_to(project_base_path))
 
 def download_batch(batch, ns_type):
-    titles_list = [urllib.parse.quote(title) for title in batch.loc[:, 'title'].tolist()] # in case of weird characters
+    titles_list = batch.loc[:, 'title'].tolist() # in case of weird characters
     titles_str = '|'.join(titles_list) # separate them with |s
     
-    api_query = f'https://en.wikipedia.org/w/api.php?action=query&prop=imageinfo&iiprop=url|mediatype|metadata|extmetadata|badfile&titles={titles_str}&format=json'
+    api_endpoint = 'https://en.wikipedia.org/w/api.php'
+    params = {
+        'action': 'query',
+        'prop': 'imageinfo',
+        'iiprop': 'url|mediatype|metadata|extmetadata|badfile',
+        'titles': titles_str,
+        'format': 'json'
+    }
 
     batch_complete = False
     while not batch_complete:
-        response = call_api(query_string = api_query, 
+        response = call_api(url = api_endpoint,
                             rest_time = 1,
-                            task = 'fetch image data')
+                            task = 'fetch image data',
+                            params = params)
         response_json = response.json()
         batch_complete = ('batchcomplete' in response_json.keys())
 
