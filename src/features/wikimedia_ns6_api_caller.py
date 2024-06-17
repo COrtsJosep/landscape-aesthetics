@@ -18,13 +18,14 @@ else:
     
 df_ns6 = pd.read_parquet(ns6_parquet_path, columns = ['title', 'country', 'query_id'])
 
+batch_size = 30
 for group_name, group in df_ns6.groupby(by = ['country', 'query_id']):
     if group_name in downloaded_groups:
         continue
     else:
-        num_batches = math.ceil(group.shape[0] / 50) # in groups of 50
+        num_batches = math.ceil(group.shape[0] / batch_size) # in groups of batch_size
         group = group.reset_index()
-        batch_list = [group.loc[(50*i):(50*(i + 1))] for i in range(num_batches)]
+        batch_list = [group.loc[(batch_size*i):(batch_size*(i + 1) - 1)] for i in range(num_batches)]
         for batch in batch_list:
             wikimedia_api_helpers.download_batch(batch = batch, ns_type = 'ns6')
         

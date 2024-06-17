@@ -1,0 +1,7 @@
+https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/Q115798692
+
+https://www.wikidata.org/wiki/Wikidata:REST_API
+
+https://www.wikidata.org/wiki/Wikidata:REST_API/Authentication
+
+https://www.jcchouinard.com/wikidata-api-python/
