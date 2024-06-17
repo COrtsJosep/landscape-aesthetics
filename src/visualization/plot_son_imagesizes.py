@@ -51,11 +51,15 @@ df_tex_size = (
     .size()
     .sort_values(ascending = False) / df_im.shape[0])
 )
+df_tex_size.iloc[9] = df_tex_size.iloc[9:].sum()
+df_tex_size.index = [name if i != 9 else 'Others' for i, name in enumerate(df_tex_size.index)]
+df_tex_size = df_tex_size.head(10)
+
 df_tex_size.to_latex(output_path / 'tables' / 'SoN_image_sizes.tex',
                 caption = 'Proportion of images in the SoN database with each image size.',
                 float_format = '%.3f',
                 label = 'tab:SoNImageSizes')
-display(df_tex_size.head(10))
+display(df_tex_size)
 
 print('\nGenerating second table...')
 df_tex_short = (
@@ -65,10 +69,15 @@ df_tex_short = (
     .size()
     .sort_values(ascending = False)) / df_im.shape[0]
 )
+
+df_tex_short.iloc[9] = df_tex_short.iloc[9:].sum()
+df_tex_short.index = [name if i != 9 else 'Others' for i, name in enumerate(df_tex_short.index)]
+df_tex_short = df_tex_short.head(10)
+
 df_tex_short.to_latex(output_path / 'tables' / 'SoN_image_shortside.tex',
                 caption = 'Proportion of images in the SoN database with each image shorter side size.',
                 float_format = '%.3f',
                 label = 'tab:SoNImageShortSize')
-display(df_tex_short.head(10))
+display(df_tex_short)
 
 print('\nAll done!')
