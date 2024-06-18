@@ -1,4 +1,5 @@
 import io
+import math
 import json
 import time
 import requests
@@ -11,6 +12,23 @@ file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 headers = {'User-Agent': 'WikimediaCallerBot/1.0 (josep.cunqueroorts@uzh.ch)'}
 
+def acceptable_batch_list(batch_list):
+    titles_strings_list = [urllib.parse.quote('|'.join(batch.loc[:, 'title'])) for batch in batch_list]
+    size_list = [len(titles_string) for titles_string in titles_strings_list]
+    return all([size < 8000 for size in size_list])
+
+def generate_batches(group):
+    batch_size = 50
+    num_batches = math.ceil(group.shape[0] / batch_size) # in groups of batch_size
+    batch_list = [group.loc[(batch_size*i):(batch_size*(i + 1) - 1)] for i in range(num_batches)]
+    
+    while not acceptable_batch_list(batch_list) and batch_size != 1:
+        batch_size = max(batch_size - 5, 1)
+        num_batches = math.ceil(group.shape[0] / batch_size) # in groups of batch_size
+        batch_list = [group.loc[(batch_size*i):(batch_size*(i + 1) - 1)] for i in range(num_batches)]
+
+    return batch_list
+
 def call_api(url, rest_time, task, params = None):
     time.sleep(rest_time)
     
@@ -19,6 +37,7 @@ def call_api(url, rest_time, task, params = None):
     while not responded or response.status_code != 200:
         try:
             response = requests.get(url, params = params, headers = headers, timeout = 60)
+            print('URL length:', len(response.url))
             responded = True
         except Exception as e:
             print(f'Got exception {e} at task "{task}". Waiting {5*times_slept} seconds and then trying again.') 
@@ -35,7 +54,7 @@ def call_api(url, rest_time, task, params = None):
                 print('The endpoint never responded.')
             input('Temporarily stopped. Input anything to resume: ')
         times_slept += 1
-
+    
     return response
 
 def center_crop(image):
@@ -101,8 +120,7 @@ def download_image(url, country, ns_type, query_id, title):
     return str(resource_destination.relative_to(project_base_path))
 
 def download_batch(batch, ns_type):
-    titles_list = batch.loc[:, 'title'].tolist() # in case of weird characters
-    titles_str = '|'.join(titles_list) # separate them with |s
+    titles_str = '|'.join(batch.loc[:, 'title']) # separate them with |s
     
     api_endpoint = 'https://en.wikipedia.org/w/api.php'
     params = {
