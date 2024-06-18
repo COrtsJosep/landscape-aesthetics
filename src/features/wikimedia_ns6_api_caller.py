@@ -24,7 +24,7 @@ for group_name, group in df_ns6.groupby(by = ['country', 'query_id']):
     if group_name in downloaded_groups:
         continue
     else:
-        group = group.reset_index()
+        group = group.reset_index(drop = True)
         batch_list = wikimedia_api_helpers.generate_batches(group)
         
         for batch in batch_list:

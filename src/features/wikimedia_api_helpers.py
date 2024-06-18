@@ -10,8 +10,36 @@ from pathlib import Path
 
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
-headers = {'User-Agent': 'WikimediaCallerBot/1.0 (josep.cunqueroorts@uzh.ch)'}
+token_file = project_base_path / 'wikimedia_auth.txt'
 
+with open(token_file, 'r') as f:
+    wikidata_token = f.read()
+    
+wikimedia_headers = {'User-Agent': 'WikimediaCallerBot/1.0 (josep.cunqueroorts@uzh.ch)'}
+wikidata_headers = {'User-Agent': 'WikidataCallerBot/1.0 (josep.cunqueroorts@uzh.ch)',
+                    'Authorization': f'{wikidata_token}'}
+
+def get_image_title(ns0_title: str) -> tuple:
+    '''
+    Given a ns6 title, calls the Wikidata API to fetch the images (only the first is taken)
+    from the Wikidata page of the object. Also fetches the coordinates. In case there
+    are many coordinate pairs (think, for instance, a street that has the coordinates of the
+    beginning and of the end), it takes the first ones only.
+    '''    
+    url = f'https://www.wikidata.org/w/rest.php/wikibase/v0/entities/items/{ns0_title}'
+    
+    response = call_api(url = url, rest_time = 0, task = 'fetch images in ns0 page', headers = wikidata_headers)
+    stats = response.json()['statements']
+    first_image = [stats['P18'][0]['value']['content'] if 'P18' in stats.keys() else None]
+    
+    if 'P625' in stats.keys():
+        content = stats['P625'][0]['value']['content'] # we select only the first coordinate pair
+        first_coords = [content['latitude'], content['longitude'], content['precision']]
+    else: 
+        first_coords = [None] * 3
+    
+    return first_image + first_coords
+                    
 def acceptable_batch_list(batch_list: list) -> bool:
     '''
     Given a list of dataframes, check if it is an acceptable partition. The reasoning
@@ -48,7 +76,7 @@ def generate_batches(group: pd.DataFrame) -> list:
 
     return batch_list
 
-def call_api(url: str, rest_time: int, task: str, params: dict = None) -> requests.models.Response:
+def call_api(url: str, rest_time: int, task: str, params: dict = None, headers: dict = None) -> requests.models.Response:
     '''
     Generic function to call an API, given some parameters, handle typical unsuccessful trials, and 
     return the response. Two unsuccessful cases are handled:
@@ -139,7 +167,7 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
     resource_destination = resource_destination.with_suffix('.jpeg') # whatever it is, it will be converted to jpeg
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
 
-    response = call_api(url = url, rest_time = 0, task = 'fetch image') # fetch image
+    response = call_api(url = url, rest_time = 0, task = 'fetch image', headers = wikimedia_headers) # fetch image
     image = Image.open(io.BytesIO(response.content)) # read it-in memory - do not save it yet
     image = transform_image(image) # transform it
     image.save(resource_destination) # now save it
@@ -177,7 +205,8 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         response = call_api(url = api_endpoint,
                             rest_time = 1,
                             task = 'fetch image data',
-                            params = params)
+                            params = params,
+                            headers = wikimedia_headers)
         response_json = response.json()
         batch_complete = ('batchcomplete' in response_json.keys())
 
