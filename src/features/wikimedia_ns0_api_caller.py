@@ -31,7 +31,20 @@ for group_name, group in df_ns0.groupby(by = ['country', 'query_id']):
         continue
     else:
         group = group.reset_index(drop = True)
-        group = wikimedia_api_helpers.add_ns6_title(group)
+        ns6_title_series = ( # create a series with the ns6 data
+            group
+            .loc[:, 'ns0_title']
+            .apply(lambda title: wikimedia_api_helpers.get_image_title(title))
+        )
+        group = (
+            group # merge it with the original dataframe
+            .join(pd.DataFrame(ns6_title_series.tolist(), 
+                               index = ns6_title_series.index, 
+                               columns = ['ns6_title', 'ns0_lat', 'ns0_lon', 'ns0_precision'])
+                 )
+        )
+        
+        0/0
         batch_list = wikimedia_api_helpers.generate_batches(group)
         
         for batch in batch_list:
