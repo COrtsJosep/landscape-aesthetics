@@ -18,7 +18,11 @@ else:
     download_log_path.parent.mkdir(parents = True, exist_ok = True)
     downloaded_groups = []
     
-df_ns6 = pd.read_parquet(ns6_parquet_path, columns = ['title', 'country', 'query_id'])
+df_ns6 = (
+    pd
+    .read_parquet(ns6_parquet_path, columns = ['title', 'country', 'query_id'])
+    .rename(columns = {'title': 'ns6_title'})
+)
 
 for group_name, group in df_ns6.groupby(by = ['country', 'query_id']):
     if group_name in downloaded_groups:
