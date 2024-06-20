@@ -2,6 +2,7 @@ import io
 import math
 import json
 import time
+import cairosvg
 import requests
 import urllib.parse
 import pandas as pd
@@ -192,7 +193,12 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
 
     response = call_api(url = url, rest_time = 0, task = 'fetch image', headers = wikimedia_headers) # fetch image
     try:
-        image = Image.open(io.BytesIO(response.content)) # read it-in memory - do not save it yet
+        if url[-4:] == '.svg': # if svg format, first convert using cairoSVG
+            content_bytes = io.BytesIO(cairosvg.svg2png(bytestring = response.content))
+        else:
+            content_bytes = io.BytesIO(response.content)
+
+        image = Image.open(content_bytes) # read it-in memory - do not save it yet
     except Exception as e:
         print(f'Error while fetching file from {url}: {e}')
         return 'Not Downloaded'
