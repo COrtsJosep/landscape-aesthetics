@@ -30,7 +30,7 @@ def get_image_title(ns0_title: str) -> tuple:
     
     response = call_api(url = url, rest_time = 0, task = 'fetch images in ns0 page', headers = wikidata_headers)
     stats = response.json()['statements']
-    first_image = [stats['P18'][0]['value']['content'] if 'P18' in stats.keys() else None]
+    first_image = ['File:' + stats['P18'][0]['value']['content'] if 'P18' in stats.keys() else None]
     
     if 'P625' in stats.keys():
         content = stats['P625'][0]['value']['content'] # we select only the first coordinate pair
@@ -39,6 +39,29 @@ def get_image_title(ns0_title: str) -> tuple:
         first_coords = [None] * 3
     
     return first_image + first_coords
+
+def add_ns6_title(group: pd.DataFrame) -> pd.DataFrame:
+    '''
+    Gets a group, creates a series with the corresponding names of the 
+    images found in the Wikidata pages of the respective objects, and
+    appends that list to the group, which is then returned.
+    '''
+    ns6_title_series = ( # create a series with the ns6 data
+            group
+            .loc[:, 'ns0_title']
+            .apply(lambda title: get_image_title(title))
+        )
+    group = (
+        group # merge it with the original dataframe, by the index
+        .join(pd.DataFrame(ns6_title_series.tolist(), 
+                           index = ns6_title_series.index, 
+                           columns = ['ns6_title', 'ns0_lat', 'ns0_lon', 'ns0_precision'])
+             )
+        .drop_duplicates(subset = 'ns6_title')
+        .dropna(subset = 'ns6_title')
+    )
+
+    return group
                     
 def acceptable_batch_list(batch_list: list) -> bool:
     '''
@@ -52,7 +75,7 @@ def acceptable_batch_list(batch_list: list) -> bool:
     to URL-accepted characters) is shorter than 8000 characters long. If it holds for all batches,
     then True is returned, else False.
     '''
-    titles_strings_list = [urllib.parse.quote('|'.join(batch.loc[:, 'title'])) for batch in batch_list]
+    titles_strings_list = [urllib.parse.quote('|'.join(batch.loc[:, 'ns6_title'])) for batch in batch_list]
     size_list = [len(titles_string) for titles_string in titles_strings_list]
     
     return all([size < 8000 for size in size_list])
@@ -63,7 +86,7 @@ def generate_batches(group: pd.DataFrame) -> list:
     usually smaller) is returned.
     The function first splits the dataframe in batches of 50, but if the batches are too large
     to be sent to the API, the split is done again, but with batch size 45. If not, again, with
-    batch size 40, etc, etc.
+    batch size 40, etc, etc. Batches larger than 50 titles are not allowed by the API.
     '''
     batch_size = 50
     num_batches = math.ceil(group.shape[0] / batch_size) # in groups of batch_size
@@ -168,7 +191,12 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
 
     response = call_api(url = url, rest_time = 0, task = 'fetch image', headers = wikimedia_headers) # fetch image
-    image = Image.open(io.BytesIO(response.content)) # read it-in memory - do not save it yet
+    try:
+        image = Image.open(io.BytesIO(response.content)) # read it-in memory - do not save it yet
+    except Exception as e:
+        print(f'Error while fetching file from {url}: {e}')
+        return 'Not Downloaded'
+        
     image = transform_image(image) # transform it
     image.save(resource_destination) # now save it
 
@@ -189,7 +217,7 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     stored in a dataframe and then saved as a csv.
     '''
     
-    titles_str = '|'.join(batch.loc[:, 'title']) # join the titles, separated with |s
+    titles_str = '|'.join(batch.loc[:, 'ns6_title']) # join the titles, separated with |s
     
     api_endpoint = 'https://en.wikipedia.org/w/api.php'
     params = { # set up query load as a dictionary
@@ -213,29 +241,30 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     # some image names are normalized. this does not always happen.
     # it is due to weird characters. to keep track, we create a dictionary
     # of new name - old name
-    renaming_dict = {title: title for title in batch.loc[:, 'title']}
+    renaming_dict = {title: title for title in batch.loc[:, 'ns6_title']}
     if 'normalized' in response_json['query'].keys():
         for element in response_json['query']['normalized']:
             renaming_dict[element['to']] = element['from']
-        # some file titles have to be normalized. to see which, uncomment
+        # some file titles might have been normalized. to see which, uncomment:
         #print('Titles were normalized. See:', response_json['query']['normalized'])
             
     pages_dct = response_json['query']['pages'] # extract the response
     pages_list = [pages_dct[key] for key in pages_dct.keys()]
     cleaned_pages_list = []
-    
+
     for page in pages_list:
         # This is the main loop, which iterates over every returned item. the item "page" is
         # cleaned and at the end appended at the cleaned_pages_list.
         # "page" is a dictionary
-        normalized_title = page['title'] # title returned by the API
-        unnormalized_title = renaming_dict[normalized_title] # original title in our records (often the same)
-        page['normalized_title'] = normalized_title
-        page['unnormalized_title'] = unnormalized_title
-        
-        query_id = batch.loc[batch.loc[:, 'title'] == unnormalized_title, 'query_id'].item() # search back which is the query_id
-        country = batch.loc[batch.loc[:, 'title'] == unnormalized_title, 'country'].item() # and country of the image
-        
+        ns6_normalized_title = page['title'] # title returned by the API
+        ns6_unnormalized_title = renaming_dict[ns6_normalized_title] # original title in our records (often the same)
+        page['ns6_normalized_title'] = ns6_normalized_title
+        page['ns6_unnormalized_title'] = ns6_unnormalized_title
+
+        obs_record = batch.loc[batch.loc[:, 'ns6_title'] == ns6_unnormalized_title]
+        query_id = obs_record.loc[:, 'query_id'].item() # search back which is the query_id
+        country = obs_record.loc[:, 'country'].item() # and country of the image
+
         metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} # find the metadata and turn it into dict
         
         page['imageinfo'][0]['extmetadata'] # extmetadata has some common fields which are useful for us
@@ -244,21 +273,29 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
             # TODO: further parse results which are unpretty?
 
         # set "by hand" some attributes
+        page['ns'] = ns_type[2] # take the number from the string ns0 or ns6
         page['url'] = page['imageinfo'][0]['url']
         page['mediatype'] = page['imageinfo'][0]['mediatype']
         page['explicit_content'] = 'yes' if 'badfile' in page['imageinfo'][0].keys() else None
         page['metadata_path'] = store_metadata(metadata = metadata, # store the metadata
             country = country, 
-            ns_type = 'ns6', 
+            ns_type = ns_type, 
             query_id = query_id, 
-            title = unnormalized_title
+            title = ns6_unnormalized_title
         )
         page['image_path'] = download_image(url = page['url'], # download the image
             country = country, 
-            ns_type = 'ns6', 
+            ns_type = ns_type, 
             query_id = query_id, 
-            title = unnormalized_title
+            title = ns6_unnormalized_title
         )
+
+        if ns_type == 'ns0': # in case of ns0, also add the fields specific to ns0 observations
+            page['ns0_title'] = obs_record.loc[:, 'ns0_title'].item()
+            page['ns0_lat'] = obs_record.loc[:, 'ns0_lat'].item() 
+            page['ns0_lon'] = obs_record.loc[:, 'ns0_lon'].item()
+            page['ns0_precision'] = obs_record.loc[:, 'ns0_precision'].item()
+            
         del page['title'] # delete unnecessary fields (we already have the data
         del page['imageinfo'] # spread in other fields
 
