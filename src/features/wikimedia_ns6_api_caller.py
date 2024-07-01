@@ -45,5 +45,3 @@ for group_name in tqdm.tqdm(group_name_list):
         downloaded_groups.append(group_name)
         with open(download_log_path, 'wb') as f:
             pickle.dump(downloaded_groups, f)
-
-    break # please do not run the whole thing yet
