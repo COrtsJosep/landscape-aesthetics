@@ -156,13 +156,12 @@ def transform_image(image: Image) -> Image:
     '''
     Takes a PIL image, transforms it, and returns it. Transformations by now are:
         - center crop,
-        - resize to 224x224, and
+        - resize to 256x256, and
         - convert to RGB color mode (3 color channels: Red Green Blue).
     '''
-    # TO FULLY DECIDE
     # TODO: what if operations fail?
     image = center_crop(image) # center crop (select a square with shorter side)
-    image = image.resize((224, 224)) # resize to a 224x224 square
+    image = image.resize((256, 256)) # resize to a 256x256 square
     image = image.convert('RGB') # convert to RGB
     return image
 
@@ -229,7 +228,7 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     params = { # set up query load as a dictionary
         'action': 'query',
         'prop': 'imageinfo',
-        'iiprop': 'url|mediatype|metadata|extmetadata|badfile',
+        'iiprop': 'url|size|mediatype|metadata|extmetadata|badfile',
         'titles': titles_str,
         'format': 'json'
     }
@@ -281,6 +280,8 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         # set "by hand" some attributes
         page['ns'] = ns_type[2] # take the number from the string ns0 or ns6
         page['url'] = page['imageinfo'][0]['url']
+        page['image_width'] = page['imageinfo'][0]['width']
+        page['image_height'] = page['imageinfo'][0]['height']
         page['mediatype'] = page['imageinfo'][0]['mediatype']
         page['explicit_content'] = 'yes' if 'badfile' in page['imageinfo'][0].keys() else None
         page['metadata_path'] = store_metadata(metadata = metadata, # store the metadata
