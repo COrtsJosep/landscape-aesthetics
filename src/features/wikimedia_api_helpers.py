@@ -229,7 +229,7 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     params = { # set up query load as a dictionary
         'action': 'query',
         'prop': 'imageinfo',
-        'iiprop': 'url|mediatype|metadata|extmetadata|badfile',
+        'iiprop': 'url|size|mediatype|metadata|extmetadata|badfile',
         'titles': titles_str,
         'format': 'json'
     }
@@ -281,6 +281,8 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         # set "by hand" some attributes
         page['ns'] = ns_type[2] # take the number from the string ns0 or ns6
         page['url'] = page['imageinfo'][0]['url']
+        page['image_width'] = page['imageinfo'][0]['width']
+        page['image_height'] = page['imageinfo'][0]['height']
         page['mediatype'] = page['imageinfo'][0]['mediatype']
         page['explicit_content'] = 'yes' if 'badfile' in page['imageinfo'][0].keys() else None
         page['metadata_path'] = store_metadata(metadata = metadata, # store the metadata
