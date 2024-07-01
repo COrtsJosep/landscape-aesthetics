@@ -1,0 +1,23 @@
+https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9887705:
+use at least 104×104
+
+https://openaccess.thecvf.com/content/ICCV2021/papers/Talebi_Learning_To_Resize_Images_for_Computer_Vision_Tasks_ICCV_2021_paper.pdf
+usually around 224x224
+
+https://www.mdpi.com/2079-9292/12/4/985
+best is 256 × 256 
+
+https://stackoverflow.com/questions/42648326/do-image-have-to-have-the-same-size-for-deep-learning
+changing ratio is bad idea
+
+https://keras.io/examples/vision/learnable_resizer/
+not higher than 300x300
+
+https://pillow.readthedocs.io/en/stable/reference/Image.html
+default in PIL is bicubic
+
+https://arxiv.org/pdf/1409.4842
+center crop and 224x224
+
+https://www.jmlr.org/papers/volume20/19-519/19-519.pdf
+random crop and 224x224. but networks are super sensible to cropping/resizing technique
