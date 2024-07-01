@@ -1,7 +1,11 @@
+import tqdm
 import pickle
+import random
 import pandas as pd
 from pathlib import Path
 import wikimedia_api_helpers
+
+random.seed(42)
 
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
@@ -26,10 +30,14 @@ df_ns0 = (
     .rename(columns = {'title': 'ns0_title'})
 )
 
+group_name_list = [group_name for group_name, _ in df_ns0.groupby(by = ['country', 'query_id'])]
+random.shuffle(group_name_list) # a group name is for instance ('FR', 435), a country code and a query ID
+
 for group_name, group in df_ns0.groupby(by = ['country', 'query_id']):
     if group_name in downloaded_groups:
         continue
     else:
+        group = df_ns0.loc[(df_ns0.loc[:, 'country'] == group_name[0]) & (df_ns0.loc[:, 'query_id'] == group_name[1])].copy(deep = True)
         group = group.reset_index(drop = True)
         group = wikimedia_api_helpers.add_ns6_title(group)
         batch_list = wikimedia_api_helpers.generate_batches(group)
