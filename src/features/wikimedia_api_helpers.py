@@ -156,13 +156,12 @@ def transform_image(image: Image) -> Image:
     '''
     Takes a PIL image, transforms it, and returns it. Transformations by now are:
         - center crop,
-        - resize to 224x224, and
+        - resize to 256x256, and
         - convert to RGB color mode (3 color channels: Red Green Blue).
     '''
-    # TO FULLY DECIDE
     # TODO: what if operations fail?
     image = center_crop(image) # center crop (select a square with shorter side)
-    image = image.resize((224, 224)) # resize to a 224x224 square
+    image = image.resize((256, 256)) # resize to a 256x256 square
     image = image.convert('RGB') # convert to RGB
     return image
 
