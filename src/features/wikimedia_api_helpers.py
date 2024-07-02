@@ -200,11 +200,15 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
         image = Image.open(content_bytes) # read it-in memory - do not save it yet
     except Exception as e:
         print(f'Error while fetching file from {url}: {e}')
-        return 'Not Downloaded'
-        
-    image = transform_image(image) # transform it
-    image.save(resource_destination) # now save it
+        return 'Not Downloaded - Download Error'
 
+    try:
+        image = transform_image(image) # transform it
+    except Excepcion as e:
+        print(f'Error while transforming file from {url}: {e}')
+        return 'Not Downloaded - Transformation Error'
+        
+    image.save(resource_destination) # now save it
     return str(resource_destination.relative_to(project_base_path))
 
 def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
