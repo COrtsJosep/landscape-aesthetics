@@ -204,7 +204,7 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
 
     try:
         image = transform_image(image) # transform it
-    except Excepcion as e:
+    except Exception as e:
         print(f'Error while transforming file from {url}: {e}')
         return 'Not Downloaded - Transformation Error'
         
