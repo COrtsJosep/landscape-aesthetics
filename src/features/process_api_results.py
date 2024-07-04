@@ -12,7 +12,11 @@ rename_dict = {
     'coordinates.bearing': 'resource_bearing'
 }
 
-def process_df(df_path):
+def process_df(df_path: Path) -> pd.DataFrame:
+    '''
+    Given a path to a csv, reads it as a df, renames columns, 
+    drops duplicates, drops undesired observations, and returns the result.
+    '''
     df = pd.read_csv(df_path)
 
     df = df.rename(columns = rename_dict) # rename accoding to convention
@@ -45,4 +49,3 @@ for ns_type in ns_types:
         .reset_index()
         .to_parquet(output_path, index = False)
     )
-
