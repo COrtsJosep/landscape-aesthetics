@@ -200,12 +200,33 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
         image = Image.open(content_bytes) # read it-in memory - do not save it yet
     except Exception as e:
         print(f'Error while fetching file from {url}: {e}')
-        return 'Not Downloaded'
-        
-    image = transform_image(image) # transform it
-    image.save(resource_destination) # now save it
+        return 'Not Downloaded - Download Error'
 
+    try:
+        image = transform_image(image) # transform it
+    except Exception as e:
+        print(f'Error while transforming file from {url}: {e}')
+        return 'Not Downloaded - Transformation Error'
+        
+    image.save(resource_destination) # now save it
     return str(resource_destination.relative_to(project_base_path))
+
+def has_missing_fields(page: dict) -> bool:
+    '''
+    Function that returns whether the page response has missing
+    fields or not.
+    '''
+    if 'title' in page.keys() and 'imageinfo' in page.keys() and len(page['imageinfo']) > 0:
+        return (
+            ('metadata' not in page['imageinfo'][0].keys())
+            or ('extmetadata' not in page['imageinfo'][0].keys())
+            or ('url' not in page['imageinfo'][0].keys())
+            or ('width' not in page['imageinfo'][0].keys())
+            or ('height' not in page['imageinfo'][0].keys())
+            or ('mediatype' not in page['imageinfo'][0].keys())
+        )
+    else:
+        return True
 
 def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     '''
@@ -261,6 +282,11 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         # This is the main loop, which iterates over every returned item. the item "page" is
         # cleaned and at the end appended at the cleaned_pages_list.
         # "page" is a dictionary
+        if has_missing_fields(page):
+            suspected_title = page['title'] if 'title' in page.keys() else 'anonymous'
+            print(f'Skipping file ({suspected_title}) due to missing fields')
+            continue # skip this page
+        
         ns6_normalized_title = page['title'] # title returned by the API
         ns6_unnormalized_title = renaming_dict[ns6_normalized_title] # original title in our records (often the same)
         page['ns6_normalized_title'] = ns6_normalized_title
@@ -269,10 +295,10 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         obs_record = batch.loc[batch.loc[:, 'ns6_title'] == ns6_unnormalized_title]
         query_id = obs_record.loc[:, 'query_id'].item() # search back which is the query_id
         country = obs_record.loc[:, 'country'].item() # and country of the image
-
+        
         metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} # find the metadata and turn it into dict
         
-        page['imageinfo'][0]['extmetadata'] # extmetadata has some common fields which are useful for us
+        # extmetadata has some common fields which are useful for us
         for key in page['imageinfo'][0]['extmetadata'].keys(): # but the format needs to be modified a bit
             page[key] = page['imageinfo'][0]['extmetadata'][key]['value']
             # TODO: further parse results which are unpretty?
@@ -304,22 +330,26 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
             page['ns0_precision'] = obs_record.loc[:, 'ns0_precision'].item()
             
         del page['title'] # delete unnecessary fields (we already have the data
-        del page['imageinfo'] # spread in other fields
+        del page['imageinfo'] # spread in other fields)
 
         cleaned_pages_list.append(page) # add the cleaned result
-    
-    df_destination = ( # define path to export csv
-        project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'dataframes' 
-        / country / ns_type / f'{country}_id{query_id}_{ns_type}.csv' 
-    )
-    df_destination.parent.mkdir(parents = True, exist_ok = True)
-    
-    existing_df = pd.read_csv(df_destination) if df_destination.exists() else None
-    current_df = pd.json_normalize(cleaned_pages_list)
-    
-    ( # here we concatenate the csv with all existing records of previous batches
-        pd
-        .concat([existing_df, current_df]) # append to existing df
-        .to_csv(df_destination, index = False)
-    )
+
+    if not cleaned_pages_list:
+        # do not do anything if there were no valid results in the API response
+        return None
+    else:
+        df_destination = ( # define path to export csv
+            project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'dataframes' 
+            / country / ns_type / f'{country}_id{query_id}_{ns_type}.csv' 
+        )
+        df_destination.parent.mkdir(parents = True, exist_ok = True)
+        
+        existing_df = pd.read_csv(df_destination) if df_destination.exists() else None
+        current_df = pd.json_normalize(cleaned_pages_list)
+        
+        ( # here we concatenate the csv with all existing records of previous batches
+            pd
+            .concat([existing_df, current_df]) # append to existing df
+            .to_csv(df_destination, index = False)
+        )
     
