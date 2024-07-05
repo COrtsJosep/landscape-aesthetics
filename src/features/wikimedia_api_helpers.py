@@ -2,6 +2,7 @@ import io
 import math
 import json
 import time
+import pickle
 import cairosvg
 import requests
 import urllib.parse
@@ -254,16 +255,32 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         'format': 'json'
     }
 
-    batch_complete = False
-    while not batch_complete: # the API returns a field called "batchcomplete" if all info requested was delivered
-        response = call_api(url = api_endpoint,
-                            rest_time = 1,
-                            task = 'fetch image data',
-                            params = params,
-                            headers = wikimedia_headers)
-        response_json = response.json()
-        batch_complete = ('batchcomplete' in response_json.keys())
-
+    
+    response = call_api(url = api_endpoint,
+                        rest_time = 1,
+                        task = 'fetch image data',
+                        params = params,
+                        headers = wikimedia_headers)
+    response_json = response.json()
+    batch_complete = ('batchcomplete' in response_json.keys())
+    if not batch_complete: 
+        # the API returns a field called "batchcomplete" if all info requested was delivered
+        # store if the batch was not completed
+        uncomplete_batches_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'temp' / 'uncomplete_batches_log.pkl'
+        uncomplete_batches_path.parent.mkdir(parents = True, exist_ok = True)
+        if uncomplete_batches_path.exists():
+            with open(uncomplete_batches_path, 'rb') as f:
+                uncomplete_batches = pickle.load(f)
+            with open(uncomplete_batches_path, 'wb') as f:
+                pickle.dump(uncomplete_batches + [(batch.loc[0, 'country'],
+                                                   batch.loc[0, 'query_id'],
+                                                   ns_type)], f)
+        else:
+            with open(uncomplete_batches_path, 'wb') as f:
+                pickle.dump([(batch.loc[0, 'country'],
+                              batch.loc[0, 'query_id'],
+                              ns_type)], f)
+    
     # some image names are normalized. this does not always happen.
     # it is due to weird characters. to keep track, we create a dictionary
     # of new name - old name
