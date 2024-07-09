@@ -272,8 +272,8 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
             with open(uncomplete_batches_path, 'rb') as f:
                 uncomplete_batches = pickle.load(f)
             with open(uncomplete_batches_path, 'wb') as f:
-                pickle.dump(uncomplete_batches + [(batch.loc[0, 'country'],
-                                                   batch.loc[0, 'query_id'],
+                pickle.dump(uncomplete_batches + [(batch.head(1).loc[:, 'country'].item(),
+                                                   batch.head(1).loc[:, 'query_id'].item(),
                                                    ns_type)], f)
         else:
             with open(uncomplete_batches_path, 'wb') as f:
