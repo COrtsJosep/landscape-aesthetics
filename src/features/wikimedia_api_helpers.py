@@ -312,8 +312,9 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         obs_record = batch.loc[batch.loc[:, 'ns6_title'] == ns6_unnormalized_title]
         query_id = obs_record.loc[:, 'query_id'].item() # search back which is the query_id
         country = obs_record.loc[:, 'country'].item() # and country of the image
-        
-        metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} # find the metadata and turn it into dict
+
+        # find the metadata and turn it into dict
+        metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} if page['imageinfo'][0]['metadata'] else {} 
         
         # extmetadata has some common fields which are useful for us
         for key in page['imageinfo'][0]['extmetadata'].keys(): # but the format needs to be modified a bit
