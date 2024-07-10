@@ -41,5 +41,6 @@ for ns_type in ns_types:
         .concat(dfs)
         .drop_duplicates(subset = 'ns6_unnormalized_title') # again drop duplicates, for close-border cases
         .reset_index()
+        .astype(str)
         .to_parquet(output_path, index = False)
     )
