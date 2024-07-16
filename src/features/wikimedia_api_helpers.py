@@ -131,7 +131,9 @@ def call_api(url: str, rest_time: int, task: str, params: dict = None, headers: 
                 print('The response included the following text:', response.text)
             except:
                 print('The endpoint never responded.')
-            input('Temporarily stopped. Input anything to resume: ')
+            decision = input('Temporarily stopped. Input (continue) to accept the response. Input anything else to try again: ')
+            if decision == 'continue':
+                return response if response else None
         times_slept += 1
     
     return response
