@@ -6,3 +6,4 @@ reports/figures/*.pdf
 **/__pycache__/
 .ipynb_checkpoints/
 wikimedia_auth.txt
+scene_classification_url.txt
