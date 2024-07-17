@@ -65,7 +65,7 @@ while proceed:
 
     ( # export the results
         pd
-        .concat([df_labelled, df_subset.assign(labeller = name])
+        .concat([df_labelled, df_subset.assign(labeller = name)])
         .to_csv(labelled_csv_path, index = False)
     )
 
