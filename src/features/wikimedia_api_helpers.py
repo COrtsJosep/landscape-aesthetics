@@ -210,10 +210,14 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
     except Exception as e:
         print(f'Error while transforming file from {url}: {e}')
         return 'Not Downloaded - Transformation Error'
-        
-    image.save(resource_destination) # now save it
-    return str(resource_destination.relative_to(project_base_path))
 
+    try:
+        image.save(resource_destination) # now save it
+        return str(resource_destination.relative_to(project_base_path))
+    except Exception as e:
+        print(f'Error while saving file from {url}: {e}')
+        return 'Not Downloaded - Saving Error'
+    
 def has_missing_fields(page: dict) -> bool:
     '''
     Function that returns whether the page response has missing
