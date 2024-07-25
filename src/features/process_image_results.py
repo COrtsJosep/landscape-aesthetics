@@ -36,11 +36,13 @@ for ns_type in ns_types:
     output_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / f'{ns_type}.parquet'
     output_path.parent.mkdir(parents = True, exist_ok = True)
     
-    (
+    df = (
         pd
         .concat(dfs)
         .drop_duplicates(subset = 'ns6_unnormalized_title') # again drop duplicates, for close-border cases
         .reset_index()
         .astype(str)
-        .to_parquet(output_path, index = False)
     )
+    df.to_parquet(output_path, index = False)
+    
+    print(f'{df.shape[0]} {ns_type} images have already been processed') 
