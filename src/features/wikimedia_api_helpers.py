@@ -2,6 +2,8 @@ import io
 import math
 import json
 import time
+import pickle
+import cairosvg
 import requests
 import urllib.parse
 import pandas as pd
@@ -57,7 +59,9 @@ def add_ns6_title(group: pd.DataFrame) -> pd.DataFrame:
                            index = ns6_title_series.index, 
                            columns = ['ns6_title', 'ns0_lat', 'ns0_lon', 'ns0_precision'])
              )
-    )
+
+        .drop_duplicates(subset = 'ns6_title')
+        .dropna(subset = 'ns6_title')
 
     return group
                     
@@ -127,7 +131,9 @@ def call_api(url: str, rest_time: int, task: str, params: dict = None, headers: 
                 print('The response included the following text:', response.text)
             except:
                 print('The endpoint never responded.')
-            input('Temporarily stopped. Input anything to resume: ')
+            decision = input('Temporarily stopped. Input (continue) to accept the response. Input anything else to try again: ')
+            if decision == 'continue':
+                return response if response else None
         times_slept += 1
     
     return response
@@ -153,13 +159,12 @@ def transform_image(image: Image) -> Image:
     '''
     Takes a PIL image, transforms it, and returns it. Transformations by now are:
         - center crop,
-        - resize to 224x224, and
+        - resize to 256x256, and
         - convert to RGB color mode (3 color channels: Red Green Blue).
     '''
-    # TO FULLY DECIDE
     # TODO: what if operations fail?
     image = center_crop(image) # center crop (select a square with shorter side)
-    image = image.resize((224, 224)) # resize to a 224x224 square
+    image = image.resize((256, 256)) # resize to a 256x256 square
     image = image.convert('RGB') # convert to RGB
     return image
 
@@ -190,11 +195,46 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
 
     response = call_api(url = url, rest_time = 0, task = 'fetch image', headers = wikimedia_headers) # fetch image
-    image = Image.open(io.BytesIO(response.content)) # read it-in memory - do not save it yet
-    image = transform_image(image) # transform it
-    image.save(resource_destination) # now save it
+    try:
+        if url[-4:] == '.svg': # if svg format, first convert using cairoSVG
+            content_bytes = io.BytesIO(cairosvg.svg2png(bytestring = response.content))
+        else:
+            content_bytes = io.BytesIO(response.content)
 
-    return str(resource_destination.relative_to(project_base_path))
+        image = Image.open(content_bytes) # read it-in memory - do not save it yet
+    except Exception as e:
+        print(f'Error while fetching file from {url}: {e}')
+        return 'Not Downloaded - Download Error'
+
+    try:
+        image = transform_image(image) # transform it
+    except Exception as e:
+        print(f'Error while transforming file from {url}: {e}')
+        return 'Not Downloaded - Transformation Error'
+
+    try:
+        image.save(resource_destination) # now save it
+        return str(resource_destination.relative_to(project_base_path))
+    except Exception as e:
+        print(f'Error while saving file from {url}: {e}')
+        return 'Not Downloaded - Saving Error'
+    
+def has_missing_fields(page: dict) -> bool:
+    '''
+    Function that returns whether the page response has missing
+    fields or not.
+    '''
+    if 'title' in page.keys() and 'imageinfo' in page.keys() and len(page['imageinfo']) > 0:
+        return (
+            ('metadata' not in page['imageinfo'][0].keys())
+            or ('extmetadata' not in page['imageinfo'][0].keys())
+            or ('url' not in page['imageinfo'][0].keys())
+            or ('width' not in page['imageinfo'][0].keys())
+            or ('height' not in page['imageinfo'][0].keys())
+            or ('mediatype' not in page['imageinfo'][0].keys())
+        )
+    else:
+        return True
 
 def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     '''
@@ -217,21 +257,37 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
     params = { # set up query load as a dictionary
         'action': 'query',
         'prop': 'imageinfo',
-        'iiprop': 'url|mediatype|metadata|extmetadata|badfile',
+        'iiprop': 'url|size|mediatype|metadata|extmetadata|badfile',
         'titles': titles_str,
         'format': 'json'
     }
 
-    batch_complete = False
-    while not batch_complete: # the API returns a field called "batchcomplete" if all info requested was delivered
-        response = call_api(url = api_endpoint,
-                            rest_time = 1,
-                            task = 'fetch image data',
-                            params = params,
-                            headers = wikimedia_headers)
-        response_json = response.json()
-        batch_complete = ('batchcomplete' in response_json.keys())
-
+    
+    response = call_api(url = api_endpoint,
+                        rest_time = 1,
+                        task = 'fetch image data',
+                        params = params,
+                        headers = wikimedia_headers)
+    response_json = response.json()
+    batch_complete = ('batchcomplete' in response_json.keys())
+    if not batch_complete: 
+        # the API returns a field called "batchcomplete" if all info requested was delivered
+        # store if the batch was not completed
+        uncomplete_batches_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'temp' / 'uncomplete_batches_log.pkl'
+        uncomplete_batches_path.parent.mkdir(parents = True, exist_ok = True)
+        if uncomplete_batches_path.exists():
+            with open(uncomplete_batches_path, 'rb') as f:
+                uncomplete_batches = pickle.load(f)
+            with open(uncomplete_batches_path, 'wb') as f:
+                pickle.dump(uncomplete_batches + [(batch.head(1).loc[:, 'country'].item(),
+                                                   batch.head(1).loc[:, 'query_id'].item(),
+                                                   ns_type)], f)
+        else:
+            with open(uncomplete_batches_path, 'wb') as f:
+                pickle.dump([(batch.loc[0, 'country'],
+                              batch.loc[0, 'query_id'],
+                              ns_type)], f)
+    
     # some image names are normalized. this does not always happen.
     # it is due to weird characters. to keep track, we create a dictionary
     # of new name - old name
@@ -250,6 +306,11 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         # This is the main loop, which iterates over every returned item. the item "page" is
         # cleaned and at the end appended at the cleaned_pages_list.
         # "page" is a dictionary
+        if has_missing_fields(page):
+            suspected_title = page['title'] if 'title' in page.keys() else 'anonymous'
+            print(f'Skipping file ({suspected_title}) due to missing fields')
+            continue # skip this page
+
         ns6_normalized_title = page['title'] # title returned by the API
         ns6_unnormalized_title = renaming_dict[ns6_normalized_title] # original title in our records (often the same)
         page['ns6_normalized_title'] = ns6_normalized_title
@@ -259,9 +320,11 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         query_id = obs_record.loc[:, 'query_id'].item() # search back which is the query_id
         country = obs_record.loc[:, 'country'].item() # and country of the image
 
-        metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} # find the metadata and turn it into dict
-        
-        page['imageinfo'][0]['extmetadata'] # extmetadata has some common fields which are useful for us
+
+        # find the metadata and turn it into dict
+        metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} if page['imageinfo'][0]['metadata'] else {} 
+
+        # extmetadata has some common fields which are useful for us
         for key in page['imageinfo'][0]['extmetadata'].keys(): # but the format needs to be modified a bit
             page[key] = page['imageinfo'][0]['extmetadata'][key]['value']
             # TODO: further parse results which are unpretty?
@@ -269,41 +332,50 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         # set "by hand" some attributes
         page['ns'] = ns_type[2] # take the number from the string ns0 or ns6
         page['url'] = page['imageinfo'][0]['url']
+        page['image_width'] = page['imageinfo'][0]['width']
+        page['image_height'] = page['imageinfo'][0]['height']
         page['mediatype'] = page['imageinfo'][0]['mediatype']
         page['explicit_content'] = 'yes' if 'badfile' in page['imageinfo'][0].keys() else None
         page['metadata_path'] = store_metadata(metadata = metadata, # store the metadata
             country = country, 
-            ns_type = 'ns6', 
+            ns_type = ns_type, 
             query_id = query_id, 
             title = ns6_unnormalized_title
         )
         page['image_path'] = download_image(url = page['url'], # download the image
             country = country, 
-            ns_type = 'ns6', 
+            ns_type = ns_type, 
             query_id = query_id, 
             title = ns6_unnormalized_title
         )
 
         if ns_type == 'ns0': # in case of ns0, also add the fields specific to ns0 observations
-            page['ns0_title'], page['ns0_lat'], page['ns0_lon'], page['ns0_precision'] = obs_record[['ns0_title', 'ns0_lat', 'ns0_lon', 'ns0_precision']]
-        
+            page['ns0_title'] = obs_record.loc[:, 'ns0_title'].item()
+            page['ns0_lat'] = obs_record.loc[:, 'ns0_lat'].item() 
+            page['ns0_lon'] = obs_record.loc[:, 'ns0_lon'].item()
+            page['ns0_precision'] = obs_record.loc[:, 'ns0_precision'].item()
+
         del page['title'] # delete unnecessary fields (we already have the data
-        del page['imageinfo'] # spread in other fields
+        del page['imageinfo'] # spread in other fields)
 
         cleaned_pages_list.append(page) # add the cleaned result
-    
-    df_destination = ( # define path to export csv
-        project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'dataframes' 
-        / country / ns_type / f'{country}_id{query_id}_{ns_type}.csv' 
-    )
-    df_destination.parent.mkdir(parents = True, exist_ok = True)
-    
-    existing_df = pd.read_csv(df_destination) if df_destination.exists() else None
-    current_df = pd.json_normalize(cleaned_pages_list)
-    
-    ( # here we concatenate the csv with all existing records of previous batches
-        pd
-        .concat([existing_df, current_df]) # append to existing df
-        .to_csv(df_destination, index = False)
-    )
+
+    if not cleaned_pages_list:
+        # do not do anything if there were no valid results in the API response
+        return None
+    else:
+        df_destination = ( # define path to export csv
+            project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'dataframes' 
+            / country / ns_type / f'{country}_id{query_id}_{ns_type}.csv' 
+        )
+        df_destination.parent.mkdir(parents = True, exist_ok = True)
+        
+        existing_df = pd.read_csv(df_destination) if df_destination.exists() else None
+        current_df = pd.json_normalize(cleaned_pages_list)
+        
+        ( # here we concatenate the csv with all existing records of previous batches
+            pd
+            .concat([existing_df, current_df]) # append to existing df
+            .to_csv(df_destination, index = False)
+        )
     
