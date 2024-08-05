@@ -1,5 +1,0 @@
-if ns == 0:
-url is f'https://wikidata.org/wiki/{element.title}'
-
-if ns == 6:
-url is f'https://commons.wikimedia.org/wiki/{element.title}'
