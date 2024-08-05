@@ -8,7 +8,15 @@ import wikimedia_api_helpers
 # we add randomness to the download order so that, in the unfortunate event
 # that we had to suddenly stop the process, the sample that we would
 # have would be as iid as possible
-random.seed(42)
+valid_seed = False
+while not valid_seed:
+    try:
+        seed = int(input('Please enter a seed value (an integer number): '))
+        valid_seed = True
+    except Exception as e:
+        print(e)
+        
+random.seed(seed)
 
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
