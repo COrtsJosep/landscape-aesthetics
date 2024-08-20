@@ -5,10 +5,9 @@ from pathlib import Path
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 ns6_parquet_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6.parquet'
-labelled_csv_path = project_base_path / 'data' / 'processed' / 'landscape_handmade' / 'landscapes.csv'
+labelled_csv_path = project_base_path / 'data' / 'processed' / 'rotation_handmade' / 'rotations.csv'
 
-# This programs shows the user images from wikimedia, and the user labels them as landscapes or as
-# non-landscapes.
+# This programs shows the user images from wikimedia, and the user labels the rotation type.
 
 labelled_csv_path.parent.mkdir(parents = True, exist_ok = True) # create directory for output
 df = ( # load df of images downloaded so far
@@ -17,6 +16,7 @@ df = ( # load df of images downloaded so far
     .query('image_path != "Not Downloaded - Download Error"') # drop download errors
     .query('image_path != "Not Downloaded - Transformation Error"')
     .query('image_path != "Not Downloaded - Saving Error"')
+    
 )
 
 name = input('Please enter your name: ') # enter name
@@ -26,7 +26,7 @@ while proceed:
     df_labelled = ( # load the csv of labelled data
         pd.read_csv(labelled_csv_path) 
         if labelled_csv_path.exists() # ...but only if it already exists
-        else pd.DataFrame(columns = ['image_path', 'landscape', 'labeller']) # otherwise create an empty df
+        else pd.DataFrame(columns = ['image_path', 'rotation', 'labeller']) # otherwise create an empty df
     )
     df_subset = ( # create a batch
         df
@@ -47,21 +47,18 @@ while proceed:
         valid_answer = False
         if i == 0:
             while not valid_answer:
-                answer = input('Is this a landscape, yes (y) or no (n)? ')
-                valid_answer =  answer in ('y', 'n')
+                answer = input('Is this image correctly oriented? Please indicate if yes (0), top is on the left (1), top is on the bottom (2), or top is on the right (3).')
+                valid_answer =  answer in ('0', '1', '2', '3')
         else:
             while not valid_answer:
-                answer = input('Is this a landscape, yes (y) or no (n)? Alternatively, type (p) to go back to the previous image. ') 
-                valid_answer = answer in ('y', 'n', 'p')
+                answer = input('Is this image correctly oriented? Please indicate if yes (0), top is on the left (1), top is on the bottom (2), or top is on the right (3). Alternatively, type (p) to go back to the previous image. ') 
+                valid_answer = answer in ('0', '1', '2', '3', 'p')
 
         # act accordingly
         if answer == 'p':
             i -= 1
-        elif answer == 'y':
-            df_subset.loc[i, 'landscape'] = 1
-            i += 1
         else:
-            df_subset.loc[i, 'landscape'] = 0
+            df_subset.loc[i, 'rotation'] = answer
             i += 1
 
     ( # export the results
