@@ -7,3 +7,4 @@ reports/figures/*.pdf
 .ipynb_checkpoints/
 wikimedia_auth.txt
 scene_classification_url.txt
+streetview_url.txt
