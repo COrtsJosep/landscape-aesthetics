@@ -21,7 +21,7 @@ network.eval()
 
 class HandlabelledDataset(torch.utils.data.Dataset):
     def __init__(self, transforms):
-        df = pd.read_csv(project_base_path / 'data/processed/rotation_handmade/rotations.csv')
+        df = pd.read_csv(project_base_path / 'data/processed/rotation_handmade/rotations.csv').loc[:200]
 
         self.__impaths = df.loc[:, 'image_path']
         self.__targets = df.loc[:, 'rotation']
