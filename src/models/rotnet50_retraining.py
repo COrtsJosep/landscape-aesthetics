@@ -21,7 +21,7 @@ network = torch.load(project_base_path / 'models' / 'rotnet50.pth')
 class HandlabelledDataset(torch.utils.data.Dataset):
     def __init__(self, transforms, train = True):
         df = pd.read_csv(project_base_path / 'data/processed/rotation_handmade/rotations.csv')
-        df = df.loc[150:] if train else df.loc[:150]
+        df = df.loc[200:] if train else df.loc[:200]
         df = df.reset_index()
 
         self.__impaths = df.loc[:, 'image_path']
@@ -43,14 +43,14 @@ transforms = v2.Compose([
 ])
 
 ds_train = HandlabelledDataset(transforms = transforms, train = True)
-dl_train = torch.utils.data.DataLoader(ds_train, 5, shuffle = True)
+dl_train = torch.utils.data.DataLoader(ds_train, 25, shuffle = True)
 
 ds_test = HandlabelledDataset(transforms = transforms, train = False)
 dl_test = torch.utils.data.DataLoader(ds_test, 25, shuffle = True)
 
 ### Training
 def train_eval(network, epochs, lr, momentum):
-    loss = torch.nn.CrossEntropyLoss()
+    loss = torch.nn.CrossEntropyLoss(weight = torch.tensor([0.1, 3, 12, 6]))
     optimizer = torch.optim.SGD(params = network.parameters(), 
                                 lr = lr, 
                                 momentum = momentum) 
@@ -60,7 +60,7 @@ def train_eval(network, epochs, lr, momentum):
     for epoch in tqdm.tqdm(range(epochs), desc = 'Main Loop'):
         # Training loop
         network.train()
-        for x, t in tqdm.tqdm(dl_train, desc = 'Train'):
+        for x, t in dl_train: #tqdm.tqdm(dl_train, desc = 'Train'):
           x = x.to(device); t = t.to(device)
           optimizer.zero_grad()
           z = network(x)
@@ -73,7 +73,7 @@ def train_eval(network, epochs, lr, momentum):
         with torch.no_grad():
           correct, total, accumulated_loss = 0, 0, 0
 
-          for x, t in tqdm.tqdm(dl_train, desc = 'Test'):
+          for x, t in dl_test: #tqdm.tqdm(dl_train, desc = 'Test'):
             x = x.to(device); t = t.to(device)
             z = network(x)
             J = loss(z, t)
