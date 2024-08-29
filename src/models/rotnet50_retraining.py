@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 
-network = torch.load(project_base_path / 'models' / 'rotnet50.pth')
+network = torch.load(project_base_path / 'models' / 'rotnet50_pretrained_COCO.pth')
 
 class HandlabelledDataset(torch.utils.data.Dataset):
     def __init__(self, transforms, train = True):
@@ -90,4 +90,4 @@ def train_eval(network, epochs, lr, momentum):
         print('Accuracy', correct / total, '\n')
 
 train_eval(network, 5, 0.001, 0.9)
-torch.save(network, project_base_path / 'models' / 'rotnet50_retrained.pth')
+torch.save(network, project_base_path / 'models' / 'rotnet50_retrained_COCO.pth')

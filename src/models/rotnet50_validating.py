@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 
-network = torch.load(project_base_path / 'models' / 'rotnet50_retrained.pth')
+network = torch.load(project_base_path / 'models' / 'rotnet50_retrained_COCO.pth')
 network.eval()
 
 class HandlabelledDataset(torch.utils.data.Dataset):
@@ -55,5 +55,5 @@ print('Lowest acceptable accuracy:', (0 == torch.cat(ts)).float().mean().item())
 print('Achieved accuracy:', (torch.cat(ps) == torch.cat(ts)).float().mean().item())
 
 conf_matrix = confusion_matrix(y_true = torch.cat(ts), y_pred = torch.cat(ps))
-ConfusionMatrixDisplay(confusion_matrix = conf_matrix, display_labels=[0, 1, 2, 3]).plot()
+ConfusionMatrixDisplay(confusion_matrix = conf_matrix, display_labels = [0, 1, 2, 3]).plot()
 plt.show()
