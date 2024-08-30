@@ -59,9 +59,9 @@ def add_ns6_title(group: pd.DataFrame) -> pd.DataFrame:
                            index = ns6_title_series.index, 
                            columns = ['ns6_title', 'ns0_lat', 'ns0_lon', 'ns0_precision'])
              )
+
         .drop_duplicates(subset = 'ns6_title')
         .dropna(subset = 'ns6_title')
-    )
 
     return group
                     
@@ -189,6 +189,7 @@ def download_image(url: str, country: str, ns_type: str, query_id: int, title: s
     Downloads an image at a path determined by the attributes of the image. Returns the 
     download path.
     '''
+    print(url)
     resource_destination = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'images' / country / ns_type / str(query_id) / title
     resource_destination = resource_destination.with_suffix('.jpeg') # whatever it is, it will be converted to jpeg
     resource_destination.parent.mkdir(parents = True, exist_ok = True)
@@ -309,7 +310,7 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
             suspected_title = page['title'] if 'title' in page.keys() else 'anonymous'
             print(f'Skipping file ({suspected_title}) due to missing fields')
             continue # skip this page
-        
+
         ns6_normalized_title = page['title'] # title returned by the API
         ns6_unnormalized_title = renaming_dict[ns6_normalized_title] # original title in our records (often the same)
         page['ns6_normalized_title'] = ns6_normalized_title
@@ -319,9 +320,10 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
         query_id = obs_record.loc[:, 'query_id'].item() # search back which is the query_id
         country = obs_record.loc[:, 'country'].item() # and country of the image
 
+
         # find the metadata and turn it into dict
         metadata = {dct['name']: dct['value'] for dct in page['imageinfo'][0]['metadata']} if page['imageinfo'][0]['metadata'] else {} 
-        
+
         # extmetadata has some common fields which are useful for us
         for key in page['imageinfo'][0]['extmetadata'].keys(): # but the format needs to be modified a bit
             page[key] = page['imageinfo'][0]['extmetadata'][key]['value']
@@ -352,7 +354,7 @@ def download_batch(batch: pd.DataFrame, ns_type: str) -> None:
             page['ns0_lat'] = obs_record.loc[:, 'ns0_lat'].item() 
             page['ns0_lon'] = obs_record.loc[:, 'ns0_lon'].item()
             page['ns0_precision'] = obs_record.loc[:, 'ns0_precision'].item()
-            
+
         del page['title'] # delete unnecessary fields (we already have the data
         del page['imageinfo'] # spread in other fields)
 
