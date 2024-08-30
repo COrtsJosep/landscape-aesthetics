@@ -9,7 +9,6 @@ from torchvision.transforms import v2
 
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
-street_data_path = project_base_path / 'data' / 'external' / 'streetview'
 coco_data_path = project_base_path / 'data' / 'external' / 'COCO'
 
 class HandlabelledDataset(torch.utils.data.Dataset):
@@ -28,20 +27,6 @@ class HandlabelledDataset(torch.utils.data.Dataset):
         im = self.__transforms(Image.open(project_base_path / self.__impaths[idx])).float()
         t = self.__targets[idx]
         return im, t
-
-class StreetviewDataset(torch.utils.data.Dataset):
-    def __init__(self, transforms, idxs):
-        self.__transforms = transforms
-        self.__idxs = idxs
-
-    def __len__(self):
-        return len(self.__idxs)
-
-    def __getitem__(self, idx):
-        t = random.choice([0, 1, 2, 3]) # randomly rotate the image
-        im = self.__transforms(Image.open(street_data_path / f'{self.__idxs[idx]}.png')).float()
-        
-        return v2.functional.rotate(im, t * 90), t
 
 class COCODataset(torch.utils.data.Dataset):
     def __init__(self, transforms, train = True):
