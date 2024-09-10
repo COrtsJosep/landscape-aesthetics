@@ -2,7 +2,7 @@ import pandas as pd
 from PIL import Image
 from pathlib import Path
 
-file_location_path = Path(__file__)
+file_location_path = file_location_path = Path.cwd()
 project_base_path = file_location_path.parent.parent.parent
 ns6_parquet_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6.parquet'
 labelled_csv_path = project_base_path / 'data' / 'processed' / 'landscape_handmade' / 'landscapes.csv'
