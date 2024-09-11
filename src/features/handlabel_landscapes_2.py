@@ -4,7 +4,7 @@ from pathlib import Path
 
 file_location_path = Path.cwd()
 project_base_path = file_location_path.parent.parent
-ns6_parquet_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6.parquet'
+ns6_parquet_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6_1.parquet'
 labelled_csv_path = project_base_path / 'data' / 'processed' / 'landscape_handmade' / 'landscapes.csv'
 
 # This programs shows the user images from wikimedia, and the user labels them as landscapes or as
