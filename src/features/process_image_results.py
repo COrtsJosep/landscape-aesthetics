@@ -21,15 +21,19 @@ def process_df(df_path: Path) -> pd.DataFrame:
 
     return df
 
-def get_row_number(dfs):
-    rows = 0
-    for df in dfs:
-        rows += df.shape[0]
+ns_foldernames = []
+for country_path in (wikimedia_path / 'dataframes').glob('*'):
+    ns_foldernames += [path.name for path in country_path.glob('*')]
+ns_types = set(ns_foldernames)
 
-    return rows
+for ns_type in ns_types:
+    dfs = []
+    print('\nNS type:', ns_type)
+    for country_path in (wikimedia_path / 'dataframes').glob('*'):
+        print('Just begun with', country_path.name)
+        dfs += [process_df(df_path) for df_path in (country_path / ns_type).glob('*.csv')]
 
-def save_dfs(dfs, ns_type, saved_times):
-    output_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / f'{ns_type}_{saved_times}.parquet'
+    output_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / f'{ns_type}.parquet'
     output_path.parent.mkdir(parents = True, exist_ok = True)
     
     df = (
@@ -40,30 +44,5 @@ def save_dfs(dfs, ns_type, saved_times):
         .astype(str)
     )
     df.to_parquet(output_path, index = False)
-
-ns_foldernames = []
-for country_path in (wikimedia_path / 'dataframes').glob('*'):
-    ns_foldernames += [path.name for path in country_path.glob('*')]
-ns_types = set(ns_foldernames)
-
-for ns_type in ns_types:
-    dfs = []
-    saved_times, saved_rows = 0, 0
-    print('\nNS type:', ns_type)
-    for country_path in (wikimedia_path / 'dataframes').glob('*'):
-        print('Just begun with', country_path.name)
-        dfs += [process_df(df_path) for df_path in (country_path / ns_type).glob('*.csv')]
-
-        if get_row_number(dfs) > 1000000:
-            save_dfs(dfs, ns_type, saved_times)
-            saved_times += 1
-            saved_rows += get_row_number(dfs)
-            
-            dfs = []
-            
-            print('Saved one chunk!')
-
-    save_dfs(dfs, ns_type, saved_times)
-    saved_times += 1
-    saved_rows += get_row_number(dfs)
-    print(f'{saved_rows} {ns_type} images have already been processed') 
+    
+    print(f'{df.shape[0]} {ns_type} images have already been processed') 

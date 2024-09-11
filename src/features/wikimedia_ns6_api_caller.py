@@ -28,17 +28,12 @@ download_log_path = project_base_path / 'data' / 'processed' / 'wikimedia_common
 
 # First open the log of completed groups (just a list of the groups that have been
 # downloaded so far. If it does not exist, create it.
-def fetch_downloaded_groups(download_log_path):
-    if download_log_path.exists():
-        with open(download_log_path, 'rb') as f:
-            downloaded_groups = pickle.load(f)
-    else:
-        download_log_path.parent.mkdir(parents = True, exist_ok = True)
-        downloaded_groups = []
-        
-    return downloaded_groups
-
-downloaded_groups = fetch_downloaded_groups(download_log_path)
+if download_log_path.exists():
+    with open(download_log_path, 'rb') as f:
+        downloaded_groups = pickle.load(f)
+else:
+    download_log_path.parent.mkdir(parents = True, exist_ok = True)
+    downloaded_groups = []
 
 # Open the file of ns6 images
 df_ns6 = (
@@ -67,7 +62,6 @@ for group_name in tqdm.tqdm(group_name_list):
 
         # After successful download, add the name of the group to the list of downloaded
         # groups, and export that information.
-        downloaded_groups = fetch_downloaded_groups(download_log_path) # update downloaded groups
-        downloaded_groups.append(group_name) # add the one just downloaded
+        downloaded_groups.append(group_name)
         with open(download_log_path, 'wb') as f:
             pickle.dump(downloaded_groups, f)
