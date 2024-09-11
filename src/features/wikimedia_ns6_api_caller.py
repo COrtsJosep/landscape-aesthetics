@@ -69,5 +69,12 @@ for group_name in tqdm.tqdm(group_name_list):
         # groups, and export that information.
         downloaded_groups = fetch_downloaded_groups(download_log_path) # update downloaded groups
         downloaded_groups.append(group_name) # add the one just downloaded
-        with open(download_log_path, 'wb') as f:
-            pickle.dump(downloaded_groups, f)
+        
+        correctly_saved = False
+        while not correctly_saved:
+            try:
+                with open(download_log_path, 'wb') as f:
+                    pickle.dump(downloaded_groups, f)
+                correctly_saved = True
+            except:
+                pass
