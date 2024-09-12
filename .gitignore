@@ -8,5 +8,6 @@ reports/figures/*.pdf
 wikimedia_auth.txt
 scene_classification_url.txt
 streetview_url.txt
-simple_cnn_1.pth
 reports/
+models/
+!src/models
