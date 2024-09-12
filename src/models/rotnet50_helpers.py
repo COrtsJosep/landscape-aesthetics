@@ -10,6 +10,7 @@ from torchvision.transforms import v2
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 coco_data_path = project_base_path / 'data' / 'external' / 'COCO'
+ns6_wiki_paths = (project_base_path / 'data' / 'processed' / 'wikimedia_commons').glob('ns6_*.parquet')
 
 class HandlabelledDataset(torch.utils.data.Dataset):
     def __init__(self, transforms, train = True):
@@ -44,20 +45,22 @@ class COCODataset(torch.utils.data.Dataset):
         return v2.functional.rotate(im, t * 90), t
 
 class WikimediaDataset(torch.utils.data.Dataset):
-    def __init__(self, transforms):
-        df = pd.read_parquet(project_base_path / 'data/processed/wikimedia_commons/ns6.parquet', columns = ['image_path'])
+    def __init__(self, transforms, i):
+        assert type(i) == int and (0 <= i < 8)
+        df = pd.read_parquet(project_base_path / f'data/processed/wikimedia_commons/ns6_{i}.parquet', columns = ['image_path'])
         download_errors = ('Not Downloaded - Download Error', 'Not Downloaded - Transformation Error', 'Not Downloaded - Saving Error')
         bool_mask = ~df.loc[:, 'image_path'].isin(download_errors)
 
-        self.__impaths = df.loc[bool_mask, 'image_path'].drop_duplicates()
+        self.__impaths = df.loc[bool_mask, 'image_path'].drop_duplicates().reset_index(drop = True)
         self.__transforms = transforms
     def __len__(self):
         return len(self.__impaths)
 
     def __getitem__(self, idx):
+        impath = self.__impaths[idx]
         im = self.__transforms(Image.open(project_base_path / self.__impaths[idx])).float()
         
-        return im
+        return im, impath
 
 def train_eval(network, epochs, lr, momentum, dl_train, dl_test, verbose = True):
     loss = torch.nn.CrossEntropyLoss(weight = torch.tensor([0.1, 3, 12, 6]))
