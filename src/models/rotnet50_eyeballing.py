@@ -7,7 +7,7 @@ from rotnet50_helpers import WikimediaDataset
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 
-network = torch.load(project_base_path / 'models' / 'rotnet50_retrained_COCO.pth')
+network = torch.load(project_base_path / 'models' / 'rotnet50_retrained.pth')
 
 transforms = v2.Compose([
     v2.PILToTensor(),
@@ -16,7 +16,7 @@ transforms = v2.Compose([
     v2.Normalize(mean = (0.485, 0.456, 0.406), std = (0.229, 0.224, 0.225))
 ])
 
-ds = WikimediaDataset(transforms = transforms)
+ds = WikimediaDataset(transforms = transforms, i = 0)
 dl = torch.utils.data.DataLoader(ds, 1, shuffle = True)
 
 i = iter(dl)

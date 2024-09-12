@@ -9,7 +9,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 
-network = torch.load(project_base_path / 'models' / 'rotnet50_retrained_COCO.pth')
+network = torch.load(project_base_path / 'models' / 'rotnet50_retrained.pth')
 network.eval()
 
 transforms = v2.Compose([
