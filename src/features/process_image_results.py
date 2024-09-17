@@ -63,7 +63,7 @@ for ns_type in ns_types:
             
             print('Saved one chunk!')
 
-    if get_row_number(dfs) <= 1000000:
+    if 0 < get_row_number(dfs) <= 1000000:
         save_dfs(dfs, ns_type, saved_times)
         saved_times += 1
         saved_rows += get_row_number(dfs)
