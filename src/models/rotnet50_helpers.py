@@ -51,7 +51,7 @@ class WikimediaDataset(torch.utils.data.Dataset):
         download_errors = ('Not Downloaded - Download Error', 'Not Downloaded - Transformation Error', 'Not Downloaded - Saving Error')
         bool_mask = ~df.loc[:, 'image_path'].isin(download_errors)
 
-        self.__impaths = df.loc[bool_mask, 'image_path'].drop_duplicates().reset_index(drop = True)
+        self.__impaths = df.loc[bool_mask, 'image_path'].drop_duplicates().dropna().reset_index(drop = True)
         self.__transforms = transforms
     def __len__(self):
         return len(self.__impaths)
