@@ -11,3 +11,4 @@ streetview_url.txt
 models/
 reports/
 !src/models/
+src/models/runs/
