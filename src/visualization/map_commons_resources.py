@@ -1,5 +1,3 @@
-import glob
-import datetime
 import pandas as pd
 from pathlib import Path
 from matplotlib import pyplot as plt
@@ -7,7 +5,7 @@ from mpl_toolkits.basemap import Basemap
 
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
-ns6_wiki_paths = glob.glob(str(project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6_*.parquet'))
+ns6_wiki_paths = (project_base_path / 'data' / 'processed' / 'wikimedia_commons').glob('ns6_*.parquet')
 output_path = project_base_path / 'reports' / 'figures'
 
 df = pd.concat([
@@ -19,12 +17,13 @@ df = pd.concat([
 df.loc[:, 'download_status'] = df.loc[:, 'image_path'].apply(lambda x: x if 'Not Downloaded' in x else 'Downloaded')
 df = (
     df
-    .query('download_status == "Downloaded"')
-    .loc[:, ['gps_latitude', 'gps_longitude']]
+    .loc[((df.loc[:, 'gps_latitude'] != 'nan') & (df.loc[:, 'download_status'] == 'Downloaded')), ['gps_latitude', 'gps_longitude']]
     .astype(float)
     .dropna()
     .drop_duplicates()
 )
+
+print('Number of points in the map:', df.shape[0])
 
 plt.figure(figsize = (15, 8))
 m = Basemap(projection = 'mill', # other projections: https://matplotlib.org/basemap/stable/users/mapsetup.html
@@ -44,13 +43,12 @@ m.scatter(x = df.loc[:, 'gps_longitude'],
           c = 'deepskyblue',
           latlon = True)
 
-plt.title(f'Geolocated Images')
+plt.title(f'Geolocated Images from Wikimedia Commons')
 plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
-timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-plt.savefig(output_path / f'map_images_{timestamp}.pdf', 
+plt.savefig(output_path / f'map_images.pdf', 
             bbox_inches = 'tight')
-plt.savefig(output_path / f'map_images_{timestamp}.png', 
+plt.savefig(output_path / f'map_images.png', 
             bbox_inches = 'tight')
 plt.show()
