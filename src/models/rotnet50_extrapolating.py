@@ -20,7 +20,7 @@ transforms = v2.Compose([
     v2.Normalize(mean = (0.485, 0.456, 0.406), std = (0.229, 0.224, 0.225))
 ])
 
-for i in range(1, 8):
+for i in range(3, 8):
     num_workers = min(4, os.cpu_count()) 
     ds = WikimediaDataset(transforms = transforms, i = i)
     dl = torch.utils.data.DataLoader(ds, 64, shuffle = False, num_workers = num_workers)
