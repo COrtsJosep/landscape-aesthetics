@@ -8,6 +8,7 @@ reports/figures/*.pdf
 wikimedia_auth.txt
 scene_classification_url.txt
 streetview_url.txt
+reports/
 models/
 reports/
 !src/models/
