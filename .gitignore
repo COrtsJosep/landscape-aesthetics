@@ -10,4 +10,6 @@ scene_classification_url.txt
 streetview_url.txt
 reports/
 models/
-!src/models
+reports/
+!src/models/
+src/models/runs/

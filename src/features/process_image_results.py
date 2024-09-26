@@ -63,7 +63,9 @@ for ns_type in ns_types:
             
             print('Saved one chunk!')
 
-    save_dfs(dfs, ns_type, saved_times)
-    saved_times += 1
-    saved_rows += get_row_number(dfs)
+    if 0 < get_row_number(dfs) <= 1000000:
+        save_dfs(dfs, ns_type, saved_times)
+        saved_times += 1
+        saved_rows += get_row_number(dfs)
+        
     print(f'{saved_rows} {ns_type} images have already been processed') 

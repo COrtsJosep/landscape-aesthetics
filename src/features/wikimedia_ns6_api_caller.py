@@ -30,13 +30,30 @@ download_log_path = project_base_path / 'data' / 'processed' / 'wikimedia_common
 # downloaded so far. If it does not exist, create it.
 def fetch_downloaded_groups(download_log_path):
     if download_log_path.exists():
-        with open(download_log_path, 'rb') as f:
-            downloaded_groups = pickle.load(f)
+        correctly_read = False
+        while not correctly_read:
+            try:
+                with open(download_log_path, 'rb') as f:
+                    downloaded_groups = pickle.load(f)
+                correctly_read = True
+            except:
+                pass
+        
     else:
         download_log_path.parent.mkdir(parents = True, exist_ok = True)
         downloaded_groups = []
         
     return downloaded_groups
+
+def save_downloaded_groups(download_log_path, downloaded_groups):
+    correctly_saved = False
+    while not correctly_saved:
+        try:
+            with open(download_log_path, 'wb') as f:
+                pickle.dump(downloaded_groups, f)
+            correctly_saved = True
+        except:
+            pass
 
 downloaded_groups = fetch_downloaded_groups(download_log_path)
 
@@ -69,5 +86,4 @@ for group_name in tqdm.tqdm(group_name_list):
         # groups, and export that information.
         downloaded_groups = fetch_downloaded_groups(download_log_path) # update downloaded groups
         downloaded_groups.append(group_name) # add the one just downloaded
-        with open(download_log_path, 'wb') as f:
-            pickle.dump(downloaded_groups, f)
+        save_downloaded_groups(download_log_path, downloaded_groups)
