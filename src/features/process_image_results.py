@@ -11,6 +11,9 @@ def process_df(df_path: Path) -> pd.DataFrame:
     Given a path to a csv, reads it as a df, adds identifier columns,
     renames columns, drops duplicates, and returns the result.
     '''
+    if 'images_from_uk.csv' in str(df_path):
+        return pd.DataFrame()
+        
     df = pd.read_csv(df_path)
 
     df.loc[:, 'query_id'] = df_path.name.split('_')[1][2:]
@@ -31,13 +34,13 @@ def get_row_number(dfs):
 def save_dfs(dfs, ns_type, saved_times):
     output_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / f'{ns_type}_{saved_times}.parquet'
     output_path.parent.mkdir(parents = True, exist_ok = True)
-    
+
     df = (
         pd
         .concat(dfs)
         .drop_duplicates(subset = 'ns6_unnormalized_title') # again drop duplicates, for close-border cases
         .reset_index()
-        .astype(str)
+        .drop(labels = ['index', 'uk_or_not'], axis = 1, errors = 'ignore') # ignore if these columns are not in the df
     )
     df.to_parquet(output_path, index = False)
 
