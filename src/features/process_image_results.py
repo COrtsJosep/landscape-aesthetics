@@ -1,3 +1,4 @@
+import numpy as np
 import inflection
 import pandas as pd
 from pathlib import Path
@@ -5,6 +6,46 @@ from pathlib import Path
 file_location_path = Path(__file__)
 project_base_path = file_location_path.parent.parent.parent
 wikimedia_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons'
+
+cols_stringify = [#'ns',
+ #'missing',
+ #'known',
+ #'imagerepository',
+ #'ns6_normalized_title',
+ #'ns6_unnormalized_title',
+ #'date_time',
+ #'object_name',
+ #'commons_metadata_extension',
+ #'categories',
+ #'assessments',
+ #'gps_latitude',
+ #'gps_longitude',
+ #'gps_map_datum',
+ 'image_description',
+ 'date_time_original',
+ #'credit',
+ #'artist',
+ #'license_short_name',
+ #'usage_terms',
+ #'attribution_required',
+ #'copyrighted',
+ #'restrictions',
+ #'license',
+ #'url',
+ #'image_width',
+ #'image_height',
+ #'mediatype',
+ #'explicit_content',
+ #'metadata_path',
+ #'image_path',
+ #'query_id',
+ #'country',
+ #'permission',
+ 'attribution',
+ #'license_url',
+ #'pageid',
+ #'author_count'
+]
 
 def process_df(df_path: Path) -> pd.DataFrame:
     '''
@@ -31,17 +72,20 @@ def get_row_number(dfs):
 
     return rows
 
-def save_dfs(dfs, ns_type, saved_times):
+def save_dfs(dfs, ns_type, saved_times, cols_stringify):
     output_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / f'{ns_type}_{saved_times}.parquet'
     output_path.parent.mkdir(parents = True, exist_ok = True)
-
+    
     df = (
         pd
         .concat(dfs)
         .drop_duplicates(subset = 'ns6_unnormalized_title') # again drop duplicates, for close-border cases
+        .query('ns == 6')
         .reset_index()
         .drop(labels = ['index', 'uk_or_not'], axis = 1, errors = 'ignore') # ignore if these columns are not in the df
     )
+    df.loc[:, cols_stringify] = df.loc[:, cols_stringify].astype(str, errors = 'ignore').replace('nan', np.nan)
+    
     df.to_parquet(output_path, index = False)
 
 ns_foldernames = []
@@ -58,7 +102,7 @@ for ns_type in ns_types:
         dfs += [process_df(df_path) for df_path in (country_path / ns_type).glob('*.csv')]
 
         if get_row_number(dfs) > 1000000:
-            save_dfs(dfs, ns_type, saved_times)
+            save_dfs(dfs, ns_type, saved_times, cols_stringify)
             saved_times += 1
             saved_rows += get_row_number(dfs)
             
@@ -67,7 +111,7 @@ for ns_type in ns_types:
             print('Saved one chunk!')
 
     if 0 < get_row_number(dfs) <= 1000000:
-        save_dfs(dfs, ns_type, saved_times)
+        save_dfs(dfs, ns_type, saved_times, cols_stringify)
         saved_times += 1
         saved_rows += get_row_number(dfs)
         
