@@ -4,22 +4,26 @@ from pathlib import Path
 
 file_location_path = Path.cwd()
 project_base_path = file_location_path.parent.parent
-ns6_parquet_path = project_base_path / 'data' / 'processed' / 'wikimedia_commons' / 'ns6_1.parquet'
+ns6_wiki_paths = (project_base_path / 'data' / 'processed' / 'wikimedia_commons').glob('ns6_*.parquet')
 labelled_csv_path = project_base_path / 'data' / 'processed' / 'landscape_handmade' / 'landscapes.csv'
 
 # This programs shows the user images from wikimedia, and the user labels them as landscapes or as
 # non-landscapes.
 
 labelled_csv_path.parent.mkdir(parents = True, exist_ok = True) # create directory for output
-df = ( # load df of images downloaded so far
+
+df = pd.concat([# load df of images downloaded so far
     pd
-    .read_parquet(ns6_parquet_path, columns = ['image_path']) # only path needed
+    .read_parquet(ns6_wiki_path, columns = ['image_path']) # only path needed
     .query('image_path != "Not Downloaded - Download Error"') # drop download errors
     .query('image_path != "Not Downloaded - Transformation Error"')
     .query('image_path != "Not Downloaded - Saving Error"')
-)
+    for ns6_wiki_path in ns6_wiki_paths
+])
 
 name = input('Please enter your name: ') # enter name
+
+num_batch = 1
 
 proceed = True
 while proceed:
@@ -73,7 +77,8 @@ while proceed:
     # decide if you want to go for another round
     valid_decision = False
     while not valid_decision:
-        decision = input(f'Batch of {n} complete - do you want to do another one, yes (y) or no (n)? ')
+        decision = input(f'{num_batch} batch complete - do you want to do another one, yes (y) or no (n)? ')
         valid_decision = decision in ('y', 'n')
-
+    
     proceed = (decision == 'y')
+    num_batch = num_batch + 1
