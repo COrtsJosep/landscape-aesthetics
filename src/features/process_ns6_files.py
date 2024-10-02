@@ -29,22 +29,20 @@ relevant_cols = [
  'url',
  'metadata_path',
  'image_path',
- #'date_time_original',
+ 'date_time_original',
  'query_id',
  'country']
 
 def clean_df(path, relevant_cols, well_oriented_image_paths):
-    df = pd.read_parquet(path)    
+    df = pd.read_parquet(path).dropna(subset = relevant_cols)   
     logical_mask = (
     	(df.loc[:, 'image_path'].apply(lambda x: 'Not Downloaded' not in x))
-    	& (df.loc[:, 'artist'].apply(lambda artist: not ('NASA' in artist or 'ESA' in artist)))
+    	& (df.loc[:, 'artist'].apply(lambda artist: not ('NASA' in artist or 'ESA' in artist) if type(artist) == str else True))
         & (df.loc[:, 'image_path'].isin(well_oriented_image_paths))
     )
 
     return (
         df
-        .replace(to_replace = 'nan', value = np.nan)
-        .dropna(subset = relevant_cols)
         .drop_duplicates(subset = 'image_path')
         .loc[logical_mask, 'image_path']
 )
