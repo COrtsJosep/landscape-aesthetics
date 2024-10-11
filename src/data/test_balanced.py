@@ -16,45 +16,14 @@ df_votes['Votes'] = df_votes['Votes'].astype(int)
 vote_counts = df_votes['Votes'].value_counts().sort_index()
 
 # Plot the histogram of raw "Votes" feature
-plt.figure(figsize=(10, 6))
-vote_counts.plot(kind='bar')
+plt.figure(figsize=(8, 6))
+vote_counts.plot(kind='bar', color='#1E90FF', width=0.8)  
+
 plt.xlabel('Vote Value')
 plt.ylabel('Frequency')
-plt.title('Distribution of Votes')
+# plt.title('Distribution of Votes')
 plt.xticks(rotation=0)
+
 plt.grid(axis='y')
 
-# Plot the histogram of the 'Average' feature
-plt.figure(figsize=(10, 6))
-plt.hist(df['Average'], bins=10, edgecolor='black')
-plt.xlabel('Average Value')
-plt.ylabel('Frequency')
-plt.title('Distribution of Average Values')
-plt.grid(axis='y')
-
-plt.show()
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set the style to make the plot look elegant
-plt.style.use('seaborn-whitegrid')
-
-# Plot the histogram of the 'Average' feature
-plt.figure(figsize=(10, 6))
-plt.hist(df['Average'], bins=10, edgecolor='black', color='skyblue')
-
-# Adding labels and title
-plt.xlabel('Average Value', fontsize=12)
-plt.ylabel('Frequency', fontsize=12)
-plt.title('Distribution of Average Values', fontsize=14)
-
-# Customizing ticks for a cleaner look
-plt.xticks(fontsize=10)
-plt.yticks(fontsize=10)
-
-# Adding grid for y-axis only
-plt.grid(True, which='major', axis='y', linestyle='--', linewidth=0.7)
-
-# Show the plot
 plt.show()
