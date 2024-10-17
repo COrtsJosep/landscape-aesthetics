@@ -25,11 +25,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# 假设您已经读取了数据
-# df = pd.read_csv('your_data.csv')
-
-sns.kdeplot(df['Average'], shade=True, color='#1E90FF')
+sns.kdeplot(df['Average'], shade=True, color='#1E90FF', bw_adjust=0.3) 
 plt.xlabel('Average Score')
 plt.ylabel('Density')
-# plt.title('Density Plot of Average Scores')
+plt.title('Density Plot of Average Scores with Lower Bandwidth')
 plt.show()
