@@ -20,3 +20,16 @@ plt.ylabel('Frequency')
 plt.grid(axis='y')
 
 plt.show()
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# 假设您已经读取了数据
+# df = pd.read_csv('your_data.csv')
+
+sns.kdeplot(df['Average'], shade=True, color='#1E90FF')
+plt.xlabel('Average Score')
+plt.ylabel('Density')
+# plt.title('Density Plot of Average Scores')
+plt.show()
