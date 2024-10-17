@@ -32,7 +32,7 @@ df = (
     .drop('gps_map_datum', axis = 1)
 )
 
-nsteps = 500
+nsteps = 100
 
 latstepsize = (maxlat - minlat) / nsteps 
 latgrid = np.arange(minlat, maxlat + latstepsize, latstepsize)[:nsteps + 1]
@@ -67,7 +67,7 @@ m.drawcountries()
 
 x, y = m(*np.meshgrid(mat.columns, mat.index))
 
-cs = m.contourf(x = x, y = y, data = mat, cmap = cm.GMT_seis, levels = 20)
+cs = m.contourf(x = x, y = y, data = mat, cmap = cm.GMT_seis, levels = 4)
 cbar = m.colorbar(cs, location = 'bottom', pad = "5%")
 cbar.set_label('Average Scenicness Score')
 plt.show()
