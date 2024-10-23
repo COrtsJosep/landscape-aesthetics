@@ -4,7 +4,7 @@ from PIL import Image
 import os
 
 root_folder = '/home/ubuntu/landscape-aesthetics/'  
-csv_file = 'selected_images_5_to_6.csv'  
+csv_file = 'selected_images_4_to_5.csv'  
 
 df = pd.read_csv(csv_file)
 
@@ -43,5 +43,5 @@ for i, (img_path, score) in enumerate(zip(df['image_path'], df['predicted_score'
     # axes[row, col].set_title(f'{score:.2f}', fontsize=6)  
 
 # save as a pdf file
-plt.savefig('image_matrix_5_to_6_A4.png', bbox_inches='tight', dpi=300)
+plt.savefig('image_matrix_4_to_5_A4.png', bbox_inches='tight', dpi=300)
 plt.show()

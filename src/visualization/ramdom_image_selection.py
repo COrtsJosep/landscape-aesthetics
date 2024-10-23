@@ -8,8 +8,8 @@ file_names = [f'processed_ns6_clean_{str(i).zfill(2)}.csv' for i in range(100)]
 
 selected_images = []
 num_per_file = 5
-lb = 6
-ub = 7
+lb = 4
+ub = 5
 
 # go through every csv file
 for file_name in file_names:
