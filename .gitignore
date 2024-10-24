@@ -13,3 +13,4 @@ models/
 reports/
 !src/models/
 src/models/runs/
+df.csv
