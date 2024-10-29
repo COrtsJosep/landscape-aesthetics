@@ -8,8 +8,8 @@ import re
 
 # path
 root_folder = '/home/ubuntu/landscape-aesthetics/'
-csv_file = '/home/ubuntu/landscape-aesthetics/data/processed/landscape_license_processed/Image_Grid/selected_images_6_to_7.csv'
-output_pdf = '/home/ubuntu/landscape-aesthetics/src/visualization/image_grid_6_to_7_with_license_links.pdf'
+csv_file = '/home/ubuntu/landscape-aesthetics/data/processed/landscape_license_processed/Image_Grid/selected_images_1_to_2.csv'
+output_pdf = '/home/ubuntu/landscape-aesthetics/src/visualization/image_grid_1_to_2_with_license_links.pdf'
 
 license_mappings = {
     "^pd$": "PD",
