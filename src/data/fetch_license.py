@@ -15,10 +15,16 @@ for i in range(100):
     
     # read parquet
     df = pd.read_parquet(input_file_path)
+
+    # df['url'] = df['url'].astype(str)  # Ensure 'url' is string
+    df['ns6_unnormalized_title'] = df['ns6_unnormalized_title'].astype(str)  # Ensure 'ns6_unnormalized_title' is string
+
+    # combine columns
+    df['url'] = 'https://commons.wikimedia.org/wiki/' + df['ns6_unnormalized_title']  # Combine 'url' and 'ns6_unnormalized_title'
     
-    # choose the columns
-    selected_columns = df[['image_path', 'license', 'url', 'attribution']]
-    
+    # select only necessary columns
+    selected_columns = df[['image_path', 'license', 'url']]
+
     # save as csv file
     output_file_name = f'ns6_clean_{i:02d}.csv'
     output_file_path = os.path.join(output_folder_path, output_file_name)

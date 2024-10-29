@@ -8,7 +8,7 @@ output_folder = '/home/ubuntu/landscape-aesthetics/data/processed/landscape_lice
 file_names = [f'merged_ns6_clean_{str(i).zfill(2)}.csv' for i in range(100)]
 
 selected_images = []
-num_per_file = 5
+total_required_images = 500  # 总共需要的图片数
 lb = 6
 ub = 7
 
@@ -22,25 +22,23 @@ def is_valid_license(license):
         return any(re.match(pattern, license) for pattern in valid_licenses)
     return False
 
-# Go through every CSV file
+# Collect images from all CSV files without limiting to 5 per file
 for file_name in file_names:
     file_path = os.path.join(folder_path, file_name)
 
     df = pd.read_csv(file_path)
 
-    # Add one standard to filter out the license
+    # Filter images based on predicted score and license
     filtered_df = df[(df['predicted_score'] >= lb) & 
                      (df['predicted_score'] < ub) &
                      (df['license'].apply(is_valid_license))]
 
-    if len(filtered_df) < num_per_file:
-        print(f"Error: File {file_name} contains less than {num_per_file} images within the interval")
-    else:
-        # Randomly select specified number of images
-        selected_rows = filtered_df.sample(n=num_per_file)
+    # Extend the selected images list with all qualifying images from this file
+    selected_images.extend(filtered_df[['image_path', 'predicted_score', 'license', 'url']].values.tolist())
 
-        # Save the path and score
-        selected_images.extend(selected_rows[['image_path', 'predicted_score', 'license', 'url']].values.tolist())
+# If we have more images than required, randomly select the total_required_images count
+if len(selected_images) > total_required_images:
+    selected_images = random.sample(selected_images, total_required_images)
 
 # Save the result in a new CSV file
 output_filename = os.path.join(output_folder, f'selected_images_{lb}_to_{ub}.csv')

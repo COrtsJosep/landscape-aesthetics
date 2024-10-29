@@ -4,26 +4,27 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 import os
+import re
 
 # path
 root_folder = '/home/ubuntu/landscape-aesthetics/'
 csv_file = '/home/ubuntu/landscape-aesthetics/data/processed/landscape_license_processed/Image_Grid/selected_images_6_to_7.csv'
 output_pdf = '/home/ubuntu/landscape-aesthetics/src/visualization/image_grid_6_to_7_with_license_links.pdf'
 
-# License info and correspondence 
 license_mappings = {
-    "pd": "PD",
-    "cc0": "CC0",
-    "cc-by": "CC BY",
-    "cc-by-sa": "CC BY-SA"
+    "^pd$": "PD",
+    "^cc0$": "CC0",
+    "^cc-by(?:-\d+\.\d+)?$": "CC BY",
+    "^cc-by-nd(?:-\d+\.\d+)?$": "CC BY-ND"
 }
 
 def is_valid_license(license):
-    """ Extract and simplify the name """
-    if isinstance(license, str):  # ensure license is a string
+    """Extract and simplify the license name"""
+    if isinstance(license, str):  # Ensure license is a string
         for valid_license, display_name in license_mappings.items():
-            if license.lower().startswith(valid_license):
-                return display_name  # return the name after correspondence
+            # Check if the license matches the pattern (ignoring versions)
+            if re.match(valid_license, license.lower()):
+                return display_name  # Return the mapped name
     return "Unknown"
 
 # read csv file
