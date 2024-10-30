@@ -13,7 +13,7 @@ conda create -n geoproject python=3.12 # create environment geoproject
 conda activate geoproject # turn it on babe
 conda install numpy pandas geopandas requests cairosvg inflection
 conda install -c conda-forge jupyterlab shapely geopy tqdm fastparquet basemap
-
+conda install pytorch torchvision torchaudio cpuonly -c pytorch
 
 # TODO: clone the repository
 cd /home/ubuntu/.ssh
