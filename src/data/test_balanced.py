@@ -17,13 +17,13 @@ vote_counts = df_votes['Votes'].value_counts().sort_index()
 
 # Plot the histogram of raw "Votes" feature
 plt.figure(figsize=(8, 6))
-vote_counts.plot(kind='bar', color='#1E90FF', width=0.8)  
-
+vote_counts.plot(kind='bar', color='#1E90FF', width=0.8)
 plt.xlabel('Vote Value')
 plt.ylabel('Frequency')
-# plt.title('Distribution of Votes')
 plt.xticks(rotation=0)
-
 plt.grid(axis='y')
+
+# Save the plot as PNG file
+plt.savefig("vote_distribution.png", format="png", dpi=300, bbox_inches="tight")
 
 plt.show()
